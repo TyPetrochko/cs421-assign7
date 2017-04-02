@@ -33,11 +33,34 @@ struct
  structure Er = ErrorMsg
  structure F = Frame
  structure R = Register
+   
+ val ilist = ref (nil: A.instr list)
+ 
+ fun emit x = ilist := x :: !ilist
 
- (* fun munchStm ... *)
- (* and munchExp ... *)
+ fun result(gen) = let val t = Temp.newtemp() in gen t; t end
 
- fun codegen _ =  []
+
+ fun munchStm (T.SEQ(a, b)) = (munchStm a; munchStm b)
+   | munchStm (T.MOVE(T.MEM(e1, s1), T.MEM(e2, s2))) = 
+        emit(A.OPER{assem="movl $'s0, $'s1",
+                    src=[munchExp e1, munchExp e2],
+                    dst=[], jump=NONE})
+   | munchStm _ = (print "Node not implemented yet!"; ())
+ and munchExp (T.MEM(e1, s1)) = result(fn r => emit(A.OPER
+                            {assem="movl $'dst[0], 'src[0]",
+                             src=[munchExp e1], dst=[r], jump=NONE}))
+   | munchExp _ = (print "TODO exp not implemented yet!";
+                  result(fn r => emit(A.OPER
+                            {assem="movl $'dst[0], $'dst[0]",
+                             src=[], dst=[r], jump=NONE})))
+ fun codegen (stm: T.stm) : A.instr list =
+ let
+   (* any decs here? *)
+ in 
+   munchStm stm;
+   rev(!ilist)
+ end
 
  (* fun string =  ... *)
 
