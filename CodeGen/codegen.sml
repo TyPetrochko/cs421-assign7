@@ -46,11 +46,12 @@ struct
         emit(A.OPER{assem="movl $'s0, $'s1",
                     src=[munchExp e1, munchExp e2],
                     dst=[], jump=NONE})
-   | munchStm _ = (print "Node not implemented yet!"; ())
- and munchExp (T.MEM(e1, s1)) = result(fn r => emit(A.OPER
+   | munchStm _ = (print "Node not implemented yet!\n"; ())
+ and munchExp (T.MEM(exp, size)) =
+        result(fn r => emit(A.OPER
                             {assem="movl $'dst[0], 'src[0]",
-                             src=[munchExp e1], dst=[r], jump=NONE}))
-   | munchExp _ = (print "TODO exp not implemented yet!";
+                             src=[munchExp exp], dst=[r], jump=NONE}))
+   | munchExp _ = (print "TODO exp not implemented yet!\n";
                   result(fn r => emit(A.OPER
                             {assem="movl $'dst[0], $'dst[0]",
                              src=[], dst=[r], jump=NONE})))

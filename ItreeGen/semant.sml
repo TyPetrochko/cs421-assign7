@@ -792,8 +792,20 @@ struct
 
   (*** transprog : A.exp -> Frame.frag list ***)
   fun transprog prog =
+    (*
      (transexp (E.base_env, E.base_tenv) prog;
       Translate.getResult ())
+    *)
+
+      (* TODO eventually comment this out... uncomment stuff above *)
+      [Frame.PROC{
+        name=S.symbol("dodo"), 
+        body=Tree.EXP(Tree.BINOP(Tree.PLUS, Tree.CONST(3), Tree.CONST(5))), 
+        frame={formals=1, offlst=[], locals=ref 3, maxargs=ref 3}},
+       Frame.PROC{
+        name=S.symbol("dodo2"), 
+        body=Tree.EXP(Tree.MEM(Tree.BINOP(Tree.PLUS, Tree.CONST(3), Tree.CONST(9)), 3)), 
+        frame={formals=1, offlst=[], locals=ref 3, maxargs=ref 3}}]
 
 end  (* structure Semant *)
 

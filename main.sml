@@ -17,7 +17,7 @@ struct
     TextIO.output(out,s))
                       (*** should really be output(out,C.string(lab,s)) ***)
 
-    | emitproc out (F.PROC{name, body, frame}) = (print "Goodbye cruel world!\n";
+    | emitproc out (F.PROC{name, body, frame}) =
         let (* val _ = print ("Emit " ^ name ^ "\n") *)
             (* val _ = Printtree.printtree(out,body); *)
 
@@ -42,7 +42,7 @@ struct
             val format0 = Assem.format (fn t => "t" ^ Temp.makestring t)
 
          in app (fn i => TextIO.output(out,format0 i)) instrs
-        end)
+        end
 
   fun withOpenFile fname f = 
         let val out = TextIO.openOut fname

@@ -1,0 +1,26 @@
+i)
+For my dummy module, I implemented simple versions of the munchStm, munchExp,
+and codegen functions in codegen.sml, as well as added some helper functions as
+suggested in the textbook.
+
+The dummy functions I defined are:
+
+  emit(x : A.insr) - append the assembly instruction x to the global list of
+                     instructions to be returned (in reverse order)
+
+  result(gen : T.temp => unit) - generate a dummy (temp) register and generate
+                                 instruction.
+
+My munchStm expression handles SEQ nodes, as well as MOVE nodes from memory to
+memory. My munchExp function handles simple load expressions.
+
+ii)
+At this point, my code cannot be used with others' code since it doesn't
+actully do anything particularly helpful.
+
+iii)
+My implementation depends on ITree gen being done - without this it's pretty
+hard to test. Getting something simple done for any of the tests would really
+help
+
+

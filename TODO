@@ -1,0 +1,13 @@
+ - Remove dummy code in semant.sml
+ - Remove weird print statement from main.sml
+ - Write "string function"
+    -> Mentioned in main.sml, cooks static data in place
+
+
+
+Stuff to do now!
+  - figure out what to put in register.sml
+  - figure out what procEntryExit does
+  - start implementing them
+  - finish munch!
+

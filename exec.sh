@@ -1,7 +1,10 @@
 #!/bin/sh
-/c/cs421/bin/sml <<EOF 2> /dev/null | egrep -v '\- |val it = |val use = |Standard|\[(linking|library|loading|scanning)'  
-    CM.make "sources.cm";
-    Main.compile "$1";
-EOF
+# /c/cs421/bin/sml <<EOF 2> /dev/null | egrep -v '\- |val it = |val use = |Standard|\[(linking|library|loading|scanning)'  
+#     CM.make "sources.cm";
+#     Main.compile "$1";
+# EOF
 
 # echo "CM.make \"sources.cm\"; PP.TS \"$1\"; Parse.parse \"$1\";" | /c/cs421/bin/sml;
+
+sml test.sml $1
+
