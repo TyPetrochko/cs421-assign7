@@ -1,0 +1,40 @@
+<i>
+
+Thus far, I've implemented all the register-related code in register.sml, a
+mostly-working implementation of procEntryExit in codegen.sml, all of the
+necessary "glue code" in main.sml, and the munchStm and munchExp functions.
+
+The procEntryExit function generates the appropriate prologue and epilogue
+code, but does not yet handle the mapping from temporaries to registers.
+
+The munchStm function handles all the cases from the textbook, but munchExp
+does not yet currently handle certain arithmetic functions (addition, division,
+etc.)
+
+<ii>
+
+My code follows the suggestions from class/piazza/textbook, and my register
+and frame structure is outlined in register.sml. Namely, I use 20
+pseudo-registers, with a locals base offset of -84 (see explanation in
+register.sml), and a param base offset of 8. The "special registers" I use
+are esp, eax, and ebp, also referred to by SP, RV, and FP respectively.
+
+I was a little unsure what the correct values are for argregs, calleesaves,
+and callersaves are, so those values should not necessarily be trusted.
+
+<iii>
+
+My code assumes that ItreeGen generates a valid tree expresion, and that
+RegAlloc can properly do the coloring algorithm.
+
+<iv>
+
+The most pressing thing right now is a working ItreeGen implementation. Right
+now, I'm using a hard-baked Itree that I'm generating in semant.sml, so I
+can't test against actual test cases. I'm currently using Stan S's RegAlloc
+implementation, but am not sure if it's fully functional yet.
+
+<v>
+
+Have not changed any other files.
+

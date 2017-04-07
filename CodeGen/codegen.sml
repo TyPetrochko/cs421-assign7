@@ -71,10 +71,30 @@ struct
                     jump=NONE})
    | munchStm (T.LABEL lab) = emit(A.LABEL{assem=Symbol.name(lab)^":\n", lab=lab})
    | munchStm _ = (print "Node not implemented yet!\n"; ())
- and munchExp (T.MEM(exp, size)) =
-        result(fn r => emit(A.OPER
-                            {assem="movl %'dst[0], 'src[0]\n",
-                             src=[munchExp exp], dst=[r], jump=NONE}))
+ and munchExp (T.MEM(T.BINOP(T.PLUS, exp, T.CONST i), size)) =
+        result(fn r => 
+            emit(A.OPER{assem="movl "^Int.toString(i)^"('src[0]), 'dst[0]\n",
+                        src=[munchExp exp],
+                        dst=[r], 
+                        jump=NONE}))
+   | munchExp (T.MEM(T.BINOP(T.PLUS, T.CONST i, exp), size)) =
+        result(fn r => 
+            emit(A.OPER{assem="movl "^Int.toString(i)^"('src[0]), 'dst[0]\n",
+                        src=[munchExp exp],
+                        dst=[r], 
+                        jump=NONE}))
+   | munchExp (T.MEM(T.CONST i, size)) =
+        result(fn r => 
+            emit(A.OPER{assem="movl $"^Int.toString(i)^", 'dst[0]\n",
+                        src=[],
+                        dst=[r], 
+                        jump=NONE}))
+   | munchExp (T.MEM(exp, size)) =
+        result(fn r => 
+            emit(A.OPER{assem="movl ('src[0]), 'dst[0]\n",
+                        src=[munchExp exp],
+                        dst=[r], 
+                        jump=NONE}))
    | munchExp _ = (print "TODO exp not implemented yet!\n";
                   result(fn r => emit(A.OPER
                             {assem="movl %'dst[0], %'dst[0]\n",
