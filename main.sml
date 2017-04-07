@@ -21,11 +21,20 @@ struct
         let (* val _ = print ("Emit " ^ name ^ "\n") *)
             (* val _ = Printtree.printtree(out,body); *)
 
+
             val stms = Canon.linearize body
             val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
+            val instrs = List.concat(map C.codegen stms')
 
-            val instrs = List.concat(map C.codegen stms') 
-
+            val (flowgraph, nodelist) = MakeGraph.instrs2graph(instrs)
+            (* not sure what conversion function is for... debugging? *)
+            val (igraph, tempConversionFunction) = Liveness.interferenceGraph(flowgraph)
+            val alloc = RegAlloc.color {
+              interference = igraph,
+              initial = Register.initial (* ??? *),
+              registers = Register.registers (* ??? *)
+            }
+            
             (* 
              * Once the RegAlloc module is ready, you can get 
              * (1) a new list of body instrs together with its live 
@@ -39,9 +48,19 @@ struct
              *     
              *)
 
+             (* Old way of doing things...! *)
+             (* val instrs = List.concat(map C.codegen stms') *)
+            val stms = Canon.linearize body
+            val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
+            val processedInstrs = C.procEntryExit {name=name,
+              body=(map(fn inst => (inst, [(* TODO *)])) instrs),
+              allocation=alloc,
+              formals = [],
+              frame=frame}
+            
             val format0 = Assem.format (fn t => "t" ^ Temp.makestring t)
 
-         in app (fn i => TextIO.output(out,format0 i)) instrs
+         in app (fn i => TextIO.output(out,format0 i)) processedInstrs
         end
 
   fun withOpenFile fname f = 

@@ -2,6 +2,8 @@
  - Remove weird print statement from main.sml
  - Write "string function"
     -> Mentioned in main.sml, cooks static data in place
+ - Make sure we pass a liveness temp list into procEntryExit
+ - For munchStm, lookup registers in actual table (see TODO around line 67 in codegen.sml)
 
 
 

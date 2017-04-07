@@ -16,12 +16,12 @@ sig
    * and actual registers.
    * This is a post-pass, to be done after register allocation.
    *)
-  (* val procEntryExit : {name : Temp.label, 
-                          body : (Assem.instr * Temp.temp list) list,
-                          allocation : R.register Temp.Table.table,
-                          formals : Temp.temp list,
-                          frame : Frame.frame} -> Assem.instr list
-   *)
+  val procEntryExit : {name : Temp.label, 
+                       body : (Assem.instr * Temp.temp list) list,
+                       allocation : R.register Temp.Table.table,
+                       formals : Temp.temp list,
+                       frame : Frame.frame} -> Assem.instr list
+  
 
 end (* signature CODEGEN *)
 
@@ -41,19 +41,43 @@ struct
  fun result(gen) = let val t = Temp.newtemp() in gen t; t end
 
 
+ (* Heavy lifting! *)
  fun munchStm (T.SEQ(a, b)) = (munchStm a; munchStm b)
+   | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, e1, T.CONST i), s1), e2)) = 
+        emit(A.MOVE{assem="movl "^Int.toString(i)^"'s0, 'd0\n",
+                    src=munchExp(e1),
+                    dst=munchExp(e2)})
+   | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1), s1), e2)) = 
+        emit(A.MOVE{assem="movl "^Int.toString(i)^"'s0, 'd0\n",
+                    src=munchExp(e1),
+                    dst=munchExp(e2)})
    | munchStm (T.MOVE(T.MEM(e1, s1), T.MEM(e2, s2))) = 
-        emit(A.OPER{assem="movl $'s0, $'s1",
-                    src=[munchExp e1, munchExp e2],
-                    dst=[], jump=NONE})
+        emit(A.MOVE{assem="movl ('s0), ('d0)\n",
+                    src=munchExp(e1),
+                    dst=munchExp(e2)})
+   | munchStm (T.MOVE(T.MEM(T.CONST i, s1), e1)) = 
+        emit(A.OPER{assem="movl $"^Int.toString(i)^", ('d0)\n",
+                    src=[],
+                    dst=[munchExp(e1)],
+                    jump=NONE})
+   | munchStm (T.MOVE(T.MEM(e1, s1), e2)) = 
+        emit(A.MOVE{assem="movl ('s0), 'd0\n",
+                    src=munchExp(e1),
+                    dst=munchExp(e1)})
+   | munchStm (T.MOVE(T.TEMP i, e1)) = (* TODO lookup in table! *)
+        emit(A.OPER{assem="movl %"^Int.toString(i)^", 'd0\n",
+                    src=[],
+                    dst=[munchExp(e1)],
+                    jump=NONE})
+   | munchStm (T.LABEL lab) = emit(A.LABEL{assem=Symbol.name(lab)^":\n", lab=lab})
    | munchStm _ = (print "Node not implemented yet!\n"; ())
  and munchExp (T.MEM(exp, size)) =
         result(fn r => emit(A.OPER
-                            {assem="movl $'dst[0], 'src[0]",
+                            {assem="movl %'dst[0], 'src[0]\n",
                              src=[munchExp exp], dst=[r], jump=NONE}))
    | munchExp _ = (print "TODO exp not implemented yet!\n";
                   result(fn r => emit(A.OPER
-                            {assem="movl $'dst[0], $'dst[0]",
+                            {assem="movl %'dst[0], %'dst[0]\n",
                              src=[], dst=[r], jump=NONE})))
  fun codegen (stm: T.stm) : A.instr list =
  let
@@ -62,6 +86,28 @@ struct
    munchStm stm;
    rev(!ilist)
  end
+
+  
+ fun procEntryExit {name : Temp.label, 
+                       body : (Assem.instr * Temp.temp list) list,
+                       allocation : R.register Temp.Table.table,
+                       formals : Temp.temp list,
+                       frame : Frame.frame} :  Assem.instr list =
+   let
+     val functionBody = ( map(fn (instr, temps) => instr) body )
+     val prologue = 
+       [A.LABEL{assem=Symbol.name(name)^":\n", lab=name},
+        A.OPER{assem="\tpushl %ebp\n", dst =[], src = [], jump = NONE},
+        A.OPER{assem="\tmovl %esp,%ebp\n", dst = [], src = [], jump=NONE} (* Change this to MOVE later *)
+       ]
+     val epilogue = 
+       [A.OPER{assem="\tmovl %ebp,%esp\n", src = [], dst = [], jump=NONE},
+        A.OPER{assem="\tpopl %ebp\n", dst = [], src = [], jump = NONE},
+        A.OPER{assem="\tret\n\n", dst = [], src = [], jump=NONE}
+       ]
+   in
+     prologue @ functionBody @ epilogue
+   end
 
  (* fun string =  ... *)
 

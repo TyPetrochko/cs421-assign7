@@ -6,5 +6,11 @@
 
 # echo "CM.make \"sources.cm\"; PP.TS \"$1\"; Parse.parse \"$1\";" | /c/cs421/bin/sml;
 
-sml test.sml $1
+sml test.sml $1;
+echo ""
+echo "**************************************"
+echo "*************** OUTPUT ***************"
+echo "**************************************"
+echo ""
+cat $1.s
 
