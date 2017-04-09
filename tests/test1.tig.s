@@ -22,43 +22,61 @@ EXP(
    CONST 1)))
 L2:
 L2:
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl $~84, 'dst0
+	addl 's0, 'dst0
+	addl 's1, 'dst0
 	movl %117, 'd0
 L2:
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl $~84, 'dst0
+	addl 's0, 'dst0
+	addl 's1, 'dst0
 	movl %117, 'd0
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
 	movl %116, 'd0
 L2:
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl $~84, 'dst0
+	addl 's0, 'dst0
+	addl 's1, 'dst0
 	movl %117, 'd0
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
 	movl %116, 'd0
-	movl %'dst[0], %'dst[0]
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl %'dst0, %'dst0
 	movl ('s0), 'd0
 L2:
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl $~84, 'dst0
+	addl 's0, 'dst0
+	addl 's1, 'dst0
 	movl %117, 'd0
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
 	movl %116, 'd0
-	movl %'dst[0], %'dst[0]
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl %'dst0, %'dst0
 	movl ('s0), 'd0
 L2:
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl $~84, 'dst0
+	addl 's0, 'dst0
+	addl 's1, 'dst0
 	movl %117, 'd0
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
 	movl %116, 'd0
-	movl %'dst[0], %'dst[0]
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl %'dst0, %'dst0
 	movl ('s0), 'd0
 L2:
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl $~84, 'dst0
+	addl 's0, 'dst0
+	addl 's1, 'dst0
 	movl %117, 'd0
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
 	movl %116, 'd0
-	movl %'dst[0], %'dst[0]
-	movl %'dst[0], %'dst[0]
+	movl %'dst0, %'dst0
+	movl %'dst0, %'dst0
 	movl ('s0), 'd0
 L1:
