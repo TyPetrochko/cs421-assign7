@@ -16,6 +16,9 @@ sig
    * and actual registers.
    * This is a post-pass, to be done after register allocation.
    *)
+
+  val regname : R.register -> string
+
   val procEntryExit : {name : Temp.label, 
                        body : (Assem.instr * Temp.temp list) list,
                        allocation : R.register Temp.Table.table,
@@ -40,6 +43,57 @@ struct
 
  fun result(gen) = let val t = Temp.newtemp() in gen t; t end
 
+   (************************************************************
+  The following is an example implementation of mapping pseudo-registers 
+  to memory load/store instructions and actual registers.  It is done
+  in a single pass.  It assumes that pseudo-register names start with
+  the letter "f".  It uses the actual registers ECX and EDX as temporaries
+  when a pseudo-register is an operand of an instruction.
+
+  There is a special case that this function does NOT handle, but you MUST!
+  The DIV instruction has special requirements.  Its dividend must be in EAX, 
+  its divisor in a general-purpose register.  It returns both the quotient,
+  in EAX, and the remainder, in EDX regardless where the original divisor was! 
+  So be careful that a divide instruction does not trash something useful
+  in EDX, and that you retrieve the correct resulut from the divide instruction.
+
+
+  (* regname -- produce an assembly language name for the given machine
+   * register or psuedo-register.
+   * psuedo-registers are mapped to an expression for psuedo-register's
+   * location in stack frame.
+   *)
+  (* regname : R.register -> string *)
+
+  *)
+  fun regname reg =
+      if (String.isPrefix "f" reg) then
+	  (* it's a psuedo-register *)
+	  let
+	      val (SOME prNum) = Int.fromString (String.extract(reg,1,NONE));
+	      val offset = (prNum + 1) * 4
+	  in
+	      "-" ^ Int.toString(offset) ^ "(%ebp)"
+	  end
+      else
+	  reg
+
+  fun debug_stm (stm as T.SEQ(_)) = "SEQ"
+    | debug_stm (stm as T.LABEL(_)) = "LABEL"
+    | debug_stm (stm as T.JUMP(_)) = "JUMP"
+    | debug_stm (stm as T.CJUMP(_)) = "CJUMP"
+    | debug_stm (stm as T.MOVE(_)) = "MOVE"
+    | debug_stm (stm as T.EXP(_)) = "EXP"
+  
+  fun debug_exp (exp as T.BINOP(_)) = "BINOP"
+    | debug_exp (exp as T.CVTOP(_)) = "CVTOP"
+    | debug_exp (exp as T.MEM(_)) = "MEM"
+    | debug_exp (exp as T.TEMP(_)) = "TEMP"
+    | debug_exp (exp as T.ESEQ(_)) = "ESEQ"
+    | debug_exp (exp as T.NAME(_)) = "NAME"
+    | debug_exp (exp as T.CONST(_)) = "CONST"
+    | debug_exp (exp as T.CONSTF(_)) = "CONSTF"
+    | debug_exp (exp as T.CALL(_)) = "CALL"
 
  (* Heavy lifting! *)
  fun munchStm (T.SEQ(a, b)) = (munchStm a; munchStm b)
@@ -71,8 +125,18 @@ struct
                     src=[],
                     dst=[munchExp(e1)],
                     jump=NONE})
+   | munchStm (T.EXP(exp)) =
+        emit(A.OPER{assem="\tmovl 's0, %eax\n", (* return value! *)
+                    src=[munchExp(exp)],
+                    dst=[],
+                    jump=NONE})
+   | munchStm (T.JUMP(exp, labels)) =
+        emit(A.OPER{assem="\tjmp 's0\n", (* TODO this is definitely not right! *)
+                    src=[munchExp(exp)],
+                    dst=[],
+                    jump=SOME(labels)})
    | munchStm (T.LABEL lab) = emit(A.LABEL{assem=Symbol.name(lab)^":\n", lab=lab})
-   | munchStm _ = (print "Node not implemented yet!\n"; ())
+   | munchStm (unknown_stm) = (print ("Node not implemented yet: "^debug_stm(unknown_stm)^"!\n"); ())
  and munchExp (T.MEM(T.BINOP(T.PLUS, exp, T.CONST i), size)) =
         result(fn r => 
             emit(A.OPER{assem="\tmovl "^Int.toString(i)^"('src[0]), 'dst0\n",
@@ -115,7 +179,10 @@ struct
                         src=[munchExp e1, munchExp e2],
                         dst=[r], 
                         jump=NONE}))
-   | munchExp _ = (print "TODO exp not implemented yet!\n";
+   | munchExp (T.NAME(label)) =
+        result(fn r => 
+            emit(A.LABEL{assem=(Symbol.name(label)^":\n"), lab=label})) (* TODO this is definitely not right! *)
+   | munchExp unknown_exp = (print ("TODO exp "^debug_exp(unknown_exp)^" not implemented yet!\n");
                   result(fn r => emit(A.OPER
                             {assem="\tmovl %'dst0, %'dst0\n",
                              src=[], dst=[r], jump=NONE})))
@@ -135,6 +202,12 @@ struct
                        frame : Frame.frame} :  Assem.instr list =
    let
      val functionBody = ( map(fn (instr, temps) => instr) body )
+     val format0 = A.format(
+      fn t => let val value = Temp.Table.look(allocation, t)
+              in case value of NONE => ErrorMsg.impossible("procEntryExit: No register for temp "^Int.toString(t))
+                    | SOME(reg_str) => regname(reg_str)
+              end
+     )
      val prologue = 
        [A.LABEL{assem=Symbol.name(name)^":\n", lab=name},
         A.OPER{assem="\tpushl %ebp\n", dst =[], src = [], jump = NONE},
@@ -143,10 +216,17 @@ struct
      val epilogue = 
        [A.OPER{assem="\tmovl %ebp,%esp\n", src = [], dst = [], jump=NONE},
         A.OPER{assem="\tpopl %ebp\n", dst = [], src = [], jump = NONE},
-        A.OPER{assem="\tret\n\n", dst = [], src = [], jump=NONE}
+        A.OPER{assem="\tret\n\n", dst = [R.ZERO, R.RA, R.SP], src = [], jump=SOME[]}
        ]
+
+     val mappedBody = map(fn inst =>
+      case inst of A.OPER{assem, src, dst, jump} => A.OPER{assem= (format0 inst), src=src, dst=dst, jump=jump}
+         | A.MOVE{assem, src, dst} => A.MOVE{assem=(format0 inst), src=src, dst=dst}
+         | A.LABEL{assem, lab} => A.LABEL{assem=assem, lab=lab}
+     ) functionBody
    in
-     prologue @ functionBody @ epilogue
+     print "BLAH";
+     prologue @ mappedBody @ epilogue
    end
 
  (* fun string =  ... *)
@@ -159,39 +239,7 @@ struct
  (* fun procEntryExit =  ... *)
 
 
-(************************************************************
-  The following is an example implementation of mapping pseudo-registers 
-  to memory load/store instructions and actual registers.  It is done
-  in a single pass.  It assumes that pseudo-register names start with
-  the letter "f".  It uses the actual registers ECX and EDX as temporaries
-  when a pseudo-register is an operand of an instruction.
-
-  There is a special case that this function does NOT handle, but you MUST!
-  The DIV instruction has special requirements.  Its dividend must be in EAX, 
-  its divisor in a general-purpose register.  It returns both the quotient,
-  in EAX, and the remainder, in EDX regardless where the original divisor was! 
-  So be careful that a divide instruction does not trash something useful
-  in EDX, and that you retrieve the correct resulut from the divide instruction.
-
-
-  (* regname -- produce an assembly language name for the given machine
-   * register or psuedo-register.
-   * psuedo-registers are mapped to an expression for psuedo-register's
-   * location in stack frame.
-   *)
-  (* regname : R.register -> string *)
-  fun regname reg =
-      if (String.isPrefix "f" reg) then
-	  (* it's a psuedo-register *)
-	  let
-	      val (SOME prNum) = Int.fromString (String.extract(reg,1,NONE));
-	      val offset = (prNum + 1) * 4
-	  in
-	      "-" ^ Int.toString(offset) ^ "(%ebp)"
-	  end
-      else
-	  reg
-
+  (*
 
  (* genSpills -- do our "poor man's spilling".  Maps all pseudo-register
   * references to actual registers, by inserting instructions to load/store

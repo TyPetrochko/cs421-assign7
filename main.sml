@@ -25,6 +25,21 @@ struct
             val stms = Canon.linearize body
             val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
             val instrs = List.concat(map C.codegen stms')
+
+            (* TODO uncomment this onces all nodes are implemented *)
+            val (flowgraph, nodelist) = MakeGraph.instrs2graph(instrs)
+            (* not sure what conversion function is for... debugging? *)
+            val (igraph, tempConversionFunction) = Liveness.interferenceGraph(flowgraph)
+            val alloc = RegAlloc.color {
+              interference = igraph,
+              initial = Register.initial (* ??? *),
+              registers = Register.registers (* ??? *)
+            }
+            val processedInstrs = C.procEntryExit {name=name,
+              body=(map(fn inst => (inst, [(* TODO *)])) instrs),
+              allocation=alloc,
+              formals = [],
+              frame=frame}
             
             (* 
              * Once the RegAlloc module is ready, you can get 
@@ -41,10 +56,11 @@ struct
 
              (* Old way of doing things...! *)
              (* val instrs = List.concat(map C.codegen stms') *)
-            val format0 = Assem.format (fn t => "t" ^ Temp.makestring t)
+            
+          val format0 = Assem.format (fn t => "t" ^ Temp.makestring t)
 
-            (* Eventually use the processed instructions... *)
-         in app (fn i => TextIO.output(out,format0 i)) instrs
+          (* TODO make this processedInstrs *)
+         in app (fn i => TextIO.output(out,format0 i)) processedInstrs
         end
 
   fun withOpenFile fname f = 

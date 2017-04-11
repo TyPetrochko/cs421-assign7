@@ -20,6 +20,9 @@ sig
 
   val initial : register Temp.Table.table
   val registers : register list
+  
+  val RA : Temp.temp
+  val ZERO : Temp.temp
 
 end (* signature REGISTER *)
 
@@ -82,7 +85,8 @@ struct
         Temp.Table.enter(Temp.Table.empty, SP, "esp"), RV, "eax"), FP, "ebp")
 
   val registers : register list = 
-    ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp"]
+    ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", (* 8 real registers *)
+    "f0", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11"] (* 12 pseudo-registers *)
 
 
 
