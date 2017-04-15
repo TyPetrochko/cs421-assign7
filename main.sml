@@ -14,7 +14,7 @@ struct
   structure F = C.F
 
   fun emitproc out (F.DATA {lab, s}) = (print "Hello world!\n";
-    TextIO.output(out,s))
+    TextIO.output(out,C.string(lab, s)))
                       (*** should really be output(out,C.string(lab,s)) ***)
 
     | emitproc out (F.PROC{name, body, frame}) =

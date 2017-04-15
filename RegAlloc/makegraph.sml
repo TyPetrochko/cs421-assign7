@@ -25,23 +25,35 @@ struct
    
       (* Adds a single assembly instruction to a few tables:
       *   1) nodeTable: Assem.instr Graph.Table.table
+      *     Maps Assem.instr to the corresponding nodes within the graph.
+      *
       *     Used when edges of control graph are created to keep track
       *     of which labels to jump to. Notice that this is necessary since
       *     we need to operate on labels and nodes at once.
       *
       *   2) labelTable: node Symbol.table
-      *     Maps labels to nodes. This is necessary when creating the 
+      *     Maps labels to nodes. Note that this table will only ever contain
+      *     nodes that are created from Assem.LABEL.
+      *
+      *     This is necessary when creating the 
       *     edges within controlGraph to find the nodes corresponding
       *     to labels that we are supposed to jump to.
       *
       *   3) defTable: Temp.temp list Graph.Table.table
-      *     We need this to construct Flow.flowgraph
+      *     We need this to construct Flow.flowgraph. 
+      *
+      *     Returns the temps that a node in the flow graph defines.
       *
       *   4) useTable: Temp.temp list Graph.Table.table
       *     We need this to construct Flow.flowgraph
       *
+      *     Returns the temps that a node in the flow graph uses.
+      *
       *   5) ismoveTable: bool Graph.Table.table
       *     We need this to construct Flow.flowgraph
+      *
+      *     Returns true if a node in the graph corresponds to a move
+      *     instruction and false otherwise.
       *)   
       fun addToTables (
         assInstr,         (* Assembly instruction *)
@@ -61,7 +73,6 @@ struct
              | _ => 
                labelTable
 
-          (* TODO: Does MOVE include src and dst for us? *)
           val newDefTable = case assInstr
             of Assem.OPER info => 
               Graph.Table.enter(defTable, node, #dst(info))
@@ -79,7 +90,7 @@ struct
               Graph.Table.enter(useTable, node, [])
 
           val newIsmoveTable = case assInstr
-            of Assem.LABEL info =>
+            of Assem.MOVE info =>
               Graph.Table.enter(ismoveTable, node, true)
              | _ =>
               Graph.Table.enter(ismoveTable, node, false)
@@ -89,13 +100,17 @@ struct
 
       (* Construct the tables by executing on all of the instructions in x *)
       val (nodeTable, labelTable, defTable, useTable, ismoveTable) =
-        foldr 
+        foldl 
           addToTables 
           (Graph.Table.empty, Symbol.empty, Graph.Table.empty,
            Graph.Table.empty, Graph.Table.empty) 
           x
 
-      (* The name describes the purpose *)
+      (* Add an edge from node to the node corresponding to label. 
+      *
+      * This is where we require the usage of the labelTable. This will also
+      * throw whenever a particular label is not known to reg alloc.
+      * *)
       fun addEdgeFromLabel node label =
         let
           val labelNode = Symbol.look(labelTable, label)
@@ -145,7 +160,8 @@ struct
                | SOME(Assem.OPER{assem, dst, src, jump = SOME(z::zs)}) =>
                 (List.map (addEdgeFromLabel x) (z::zs); ())
                | SOME(_) =>
-                ErrorMsg.impossible("MakeGraph::addEdges: last elt not OPER!")
+                () (* We allow the last instruction to be a dead end if the
+                stack above is OK with passing us such a graph.*)
           end
         | addEdges(node::nextNode::xs) = (* Your regular recursive step *)
           (addEdge(node, nextNode); addEdges(nextNode::xs))

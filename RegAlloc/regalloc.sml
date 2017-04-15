@@ -6,6 +6,11 @@ sig
    
    type allocation = Register.register Temp.Table.table
 
+   (* The color function takes an initial allocation table (which assigns
+    *  temporary variables such as FP or SP into certain fixed registers)
+    *  plus an interference graph and a list of registers, and returns
+    *  a new allocation table (mapping from temporaries to registers).
+    *)
    val color : {interference : Liveness.igraph,
                 initial : allocation,
                 registers : R.register list} -> allocation
@@ -18,19 +23,23 @@ struct
 
    type allocation = R.register Temp.Table.table
 
-   (* The color function talkes an initial allocation table (which assigns
-      temporary variables such as FP or SP into certain fixed registers)
-      plus an interference graph and a list of registers, and returns
-      a new allocation table (mapping from temporaries to registers).
+  (* The following few functions are just utility functions meant to 
+   * make code more readable and easier to follow.
+   *)
 
-      Notice, you don't need to implement spilling and coalescing. 
-      Just do the "simplify" and then do the "select".
-    *)
-
-   (* The following few functions are just utility functions meant to 
-    * make code more readable and easier to follow.
-    *)
-
+  (* Graph.adj returns a list of nodes that are adjacent to a node. However, the
+   * list does not contain unique values. This function gets rid of duplicated
+   * values. This does not seem like a big deal since we are not implementing
+   * spilling, but in generality the algorithm chooses nodes of insignificant
+   * degree so we musn't count directed edges double.
+   *)
+  fun removeDuplicatesFromAdjList(nil) = nil
+    | removeDuplicatesFromAdjList(x::xs) = 
+      x::(
+        removeDuplicatesFromAdjList(
+          List.filter (fn y => 
+            Graph.nodename(x) <> Graph.nodename(y)) xs))
+    
   (*
    *  listContains -> returns true if "list" contains "elt" and false
    *  otherwise
@@ -84,10 +93,12 @@ struct
       (* Syntactic sugar to make it easier to get the number of registers *)
       val regNum = length(registers)  
       (* A mapping providing the current degree of the tmpNode. Notice that
-      * those values change as we simplify nodes. *)
+       * those values change as we simplify nodes. 
+       *)
       val nodeOrderMap = 
         foldr 
-        (fn(n, map) => Graph.Table.enter(map, n, length(Graph.adj(n))))
+        (fn(n, map) => 
+          Graph.Table.enter(map, n, length(removeDuplicatesFromAdjList(Graph.adj(n)))))
         Graph.Table.empty
         (Graph.nodes(graph))
 
@@ -217,11 +228,11 @@ struct
       val nodesToConsider = 
         List.filter
           (fn(node) => 
-            (tempTableContains(
-              initial, getFromGraphTable(gtemp, node)))) 
+            (not(tempTableContains(
+              initial, getFromGraphTable(gtemp, node))))) 
           (Graph.nodes(graph))
 
-      val (_, simplified) = simplify([], nodesToConsider)
+      val (_, simplified) = simplify(nodesToConsider, [])
     in
       select(simplified)
     end

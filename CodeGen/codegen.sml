@@ -9,7 +9,7 @@ sig
   val codegen : Tree.stm -> Assem.instr list 
 
   (* converting a string fragment into the actual assembly code *)
-  (* val string : Temp.label * string -> string *)
+  val string : Temp.label * string -> string
 
   (* procEntryExit sequence + function calling sequence tune-up 
    * + mapping pseudo-registers to memory load/store instructions 
@@ -60,7 +60,7 @@ struct
 
   (* regname -- produce an assembly language name for the given machine
    * register or psuedo-register.
-   * psuedo-registers are mapped to an expression for psuedo-register's
+   * psuedo-registers are mapped to an expression for psuedo-register%`s
    * location in stack frame.
    *)
   (* regname : R.register -> string *)
@@ -68,7 +68,7 @@ struct
   *)
   fun regname reg =
       if (String.isPrefix "f" reg) then
-	  (* it's a psuedo-register *)
+	  (* it%`s a psuedo-register *)
 	  let
 	      val (SOME prNum) = Int.fromString (String.extract(reg,1,NONE));
 	      val offset = (prNum + 1) * 4
@@ -98,93 +98,104 @@ struct
  (* Heavy lifting! *)
  fun munchStm (T.SEQ(a, b)) = (munchStm a; munchStm b)
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, e1, T.CONST i), s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"'s0, 'd0\n",
+        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"%`s0, %`d0\n",
                     src=munchExp(e1),
                     dst=munchExp(e2)})
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1), s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"'s0, 'd0\n",
+        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"%`s0, %`d0\n",
                     src=munchExp(e1),
                     dst=munchExp(e2)})
           (* x86 has no mem-mem MOV *)
    (*| munchStm (T.MOVE(T.MEM(e1, s1), T.MEM(e2, s2))) = 
-        emit(A.MOVE{assem="\tmovl ('s0), ('d0)\n",
+        emit(A.MOVE{assem="\tmovl (%`s0), (%`d0)\n",
                     src=munchExp(e1),
                     dst=munchExp(e2)})
     *)
+   | munchStm (T.MOVE(T.MEM(T.NAME lab, s1), e1)) = 
+        emit(A.OPER{assem="\tJUST IMPLEMENTED: movl $"^Symbol.name(lab)^", (%`d0)\n",
+                    src=[],
+                    dst=[munchExp(e1)],
+                    jump=NONE})
    | munchStm (T.MOVE(T.MEM(T.CONST i, s1), e1)) = 
-        emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", ('d0)\n",
+        emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", (%`d0)\n",
                     src=[],
                     dst=[munchExp(e1)],
                     jump=NONE})
    | munchStm (T.MOVE(T.MEM(e1, s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl ('s0), 'd0\n",
+        emit(A.MOVE{assem="\tmovl (%`s0), %`d0\n",
                     src=munchExp(e1),
                     dst=munchExp(e1)})
    | munchStm (T.MOVE(T.TEMP i, e1)) = (* TODO lookup in table! *)
-        emit(A.OPER{assem="\tmovl %"^Int.toString(i)^", 'd0\n",
-                    src=[],
+        emit(A.OPER{assem="\tmovl %`s0, %`d0\n",
+                    src=[i],
                     dst=[munchExp(e1)],
                     jump=NONE})
    | munchStm (T.EXP(exp)) =
-        emit(A.OPER{assem="\tmovl 's0, %eax\n", (* return value! *)
+        emit(A.OPER{assem="\tTODO THIS IS WRONG: movl %`s0, %eax\n", (* return value! *)
                     src=[munchExp(exp)],
                     dst=[],
                     jump=NONE})
-   | munchStm (T.JUMP(exp, labels)) =
-        emit(A.OPER{assem="\tjmp 's0\n", (* TODO this is definitely not right! *)
-                    src=[munchExp(exp)],
+   | munchStm (T.JUMP(T.NAME lab, labels)) =
+        emit(A.OPER{assem="\tjmp "^Symbol.name(lab)^"\n", (* TODO this is definitely not right! *)
+                    src=[],
                     dst=[],
                     jump=SOME(labels)})
    | munchStm (T.LABEL lab) = emit(A.LABEL{assem=Symbol.name(lab)^":\n", lab=lab})
    | munchStm (unknown_stm) = (print ("Node not implemented yet: "^debug_stm(unknown_stm)^"!\n"); ())
  and munchExp (T.MEM(T.BINOP(T.PLUS, exp, T.CONST i), size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"('src[0]), 'dst0\n",
+            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"(%`s0), %`d0\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(T.BINOP(T.PLUS, T.CONST i, exp), size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"('src[0]), 'dst0\n",
+            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"(%`s0), %`d0\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(T.CONST i, size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", 'dst0\n",
+            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", %`d0\n",
                         src=[],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(exp, size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl ('src[0]), 'dst0\n",
+            emit(A.OPER{assem="\tmovl (%`s0), %`d0\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.BINOP(T.PLUS, T.CONST i, e1)) =
         result(fn r => 
-            emit(A.OPER{assem="\taddl $"^Int.toString(i)^", 'dst0\n\taddl 's0, 'dst0\n",
+            emit(A.OPER{assem="\taddl $"^Int.toString(i)^", %`d0\n\taddl %`s0, %`d0\n",
                         src=[munchExp e1],
+                        dst=[r], 
+                        jump=NONE}))
+   | munchExp (T.TEMP tmp) =
+        result(fn r => 
+            emit(A.OPER{assem="\tmovl %`s0, %`d0\n",
+                        src=[tmp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.CONST i) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", 'dst0\n",
+            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", %`d0\n",
                         src=[],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.BINOP(T.PLUS, e1, e2)) =
         result(fn r => 
-            emit(A.OPER{assem="\taddl 's0, 'dst0\n\taddl 's1, 'dst0\n",
+            emit(A.OPER{assem="\taddl %`s0, %`d0\n\taddl %`s1, %`d0\n",
                         src=[munchExp e1, munchExp e2],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.NAME(label)) =
         result(fn r => 
-            emit(A.LABEL{assem=(Symbol.name(label)^":\n"), lab=label})) (* TODO this is definitely not right! *)
+            emit(A.LABEL{assem=("TODO THIS SHOULD BE CAUGHT: "^Symbol.name(label)^":\n"), lab=label})) (* TODO this is definitely not right! *)
    | munchExp unknown_exp = (print ("TODO exp "^debug_exp(unknown_exp)^" not implemented yet!\n");
                   result(fn r => emit(A.OPER
-                            {assem="\tmovl %'dst0, %'dst0\n",
+                            {assem="\tmovl %`d0, %`d0\n",
                              src=[], dst=[r], jump=NONE})))
  fun codegen (stm: T.stm) : A.instr list =
  let
@@ -225,11 +236,10 @@ struct
          | A.LABEL{assem, lab} => A.LABEL{assem=assem, lab=lab}
      ) functionBody
    in
-     print "BLAH";
      prologue @ mappedBody @ epilogue
    end
 
- (* fun string =  ... *)
+ fun string (lab, str) = (print (Symbol.name(lab)^" IS WHAT IT SHOULD BE\n");Symbol.name(lab)^":\n\t.string \""^str^"\"\n")
 
   (* procEntryExit sequence + function calling sequence tune-up 
    * + mapping pseudo-registers to memory load/store instructions 
@@ -241,7 +251,7 @@ struct
 
   (*
 
- (* genSpills -- do our "poor man's spilling".  Maps all pseudo-register
+ (* genSpills -- do our "poor man%`s spilling".  Maps all pseudo-register
   * references to actual registers, by inserting instructions to load/store
   * the pseudo-register to/from a real register
   *)
@@ -257,7 +267,7 @@ struct
 		  val srcnm = (saytemp src)
 	      in
 		  if (String.isPrefix "f" srcnm) then
-		      (* it's a fake register: *)
+		      (* it%`s a fake register: *)
 		      let
 			  val _ = print ("loadit(): mapping pseudo-register `" ^ srcnm ^ "' to machine reg. `" ^ (saytemp mreg) ^"'\n");
 			  val loadInsn = "\tmovl\t" ^ (R.regname srcnm) ^ ", " ^ (saytemp mreg) ^ " # load pseudo-register\n"
@@ -325,7 +335,7 @@ struct
 			  val mreg=List.nth (newsrcs,idx)
 		      in
 			  if (src <> mreg) then
-			      ("\tmovl\t`d0, " ^ (R.regname dstnm) ^ " # save pseudo-register\n", mreg::dsts)
+			      ("\tmovl\t%`d0, " ^ (R.regname dstnm) ^ " # save pseudo-register\n", mreg::dsts)
 			  else
 			      (* no mapping *)
 			      ("", dst::dsts)
@@ -333,14 +343,14 @@ struct
 		  else
 		      (* this dst isn't a source, but it might be a pseudo-register *)
                       if (String.isPrefix "f" dstnm) then
-                          (* it's a fake register: *)
+                          (* it%`s a fake register: *)
                           (* we can safely just replace this destination with
                            * %ecx, and then write out %ecx to the pseudo-register
                            * location.  Even if %ecx was used to hold a different
                            * source pseudo-register, we won't end up clobbering
                            * it until after the source has been used...
                            *)
-                          ("\tmovl\t`d0, " ^ (R.regname dstnm) ^ " # save pseudo-register\n", R.ECX::dsts)
+                          ("\tmovl\t%`d0, " ^ (R.regname dstnm) ^ " # save pseudo-register\n", R.ECX::dsts)
                       else
                           (* no mapping *)
                           ("", dst::dsts)
