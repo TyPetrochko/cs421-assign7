@@ -40,6 +40,8 @@ struct
  val ilist = ref (nil: A.instr list)
  
  fun emit x = ilist := x :: !ilist
+ 
+ fun clearIlist() = ilist := []
 
  fun result(gen) = let val t = Temp.newtemp() in gen t; t end
 
@@ -98,11 +100,11 @@ struct
  (* Heavy lifting! *)
  fun munchStm (T.SEQ(a, b)) = (munchStm a; munchStm b)
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, e1, T.CONST i), s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"%`s0, %`d0\n",
+        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"%`s0, %`d0\t#a\n", (* TODO think this is wrong! *)
                     src=munchExp(e1),
                     dst=munchExp(e2)})
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1), s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"%`s0, %`d0\n",
+        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"%`s0, %`d0\t#b\n",
                     src=munchExp(e1),
                     dst=munchExp(e2)})
           (* x86 has no mem-mem MOV *)
@@ -112,81 +114,81 @@ struct
                     dst=munchExp(e2)})
     *)
    | munchStm (T.MOVE(T.MEM(T.NAME lab, s1), e1)) = 
-        emit(A.OPER{assem="\tJUST IMPLEMENTED: movl $"^Symbol.name(lab)^", (%`d0)\n",
+        emit(A.OPER{assem="\tJUST IMPLEMENTED: movl $"^Symbol.name(lab)^", (%`d0)\t#c\n",
                     src=[],
                     dst=[munchExp(e1)],
                     jump=NONE})
    | munchStm (T.MOVE(T.MEM(T.CONST i, s1), e1)) = 
-        emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", (%`d0)\n",
+        emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", (%`d0)\t#d\n",
                     src=[],
                     dst=[munchExp(e1)],
                     jump=NONE})
    | munchStm (T.MOVE(T.MEM(e1, s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl (%`s0), %`d0\n",
+        emit(A.MOVE{assem="\tmovl (%`s0), %`d0\t#e\n",
                     src=munchExp(e1),
-                    dst=munchExp(e1)})
+                    dst=munchExp(e2)})
    | munchStm (T.MOVE(T.TEMP i, e1)) = (* TODO lookup in table! *)
-        emit(A.OPER{assem="\tmovl %`s0, %`d0\n",
-                    src=[i],
-                    dst=[munchExp(e1)],
+        emit(A.OPER{assem="\tmovl %`s0, %`d0\t#f\n",
+                    src=[munchExp(e1)],
+                    dst=[i],
                     jump=NONE})
    | munchStm (T.EXP(exp)) =
-        emit(A.OPER{assem="\tTODO THIS IS WRONG: movl %`s0, %eax\n", (* return value! *)
+        emit(A.OPER{assem="\tTODO THIS IS WRONG: movl %`s0, %eax\t#g\n", (* return value! *)
                     src=[munchExp(exp)],
                     dst=[],
                     jump=NONE})
    | munchStm (T.JUMP(T.NAME lab, labels)) =
-        emit(A.OPER{assem="\tjmp "^Symbol.name(lab)^"\n", (* TODO this is definitely not right! *)
+        emit(A.OPER{assem="\tjmp "^Symbol.name(lab)^"\t#h\n", (* TODO this is definitely not right! *)
                     src=[],
                     dst=[],
                     jump=SOME(labels)})
-   | munchStm (T.LABEL lab) = emit(A.LABEL{assem=Symbol.name(lab)^":\n", lab=lab})
-   | munchStm (unknown_stm) = (print ("Node not implemented yet: "^debug_stm(unknown_stm)^"!\n"); ())
+   | munchStm (T.LABEL lab) = emit(A.LABEL{assem="LABEL: "^Symbol.name(lab)^":\n", lab=lab})
+   | munchStm (unknown_stm) = (print ("Node not implemented yet: "^debug_stm(unknown_stm)^"!\t#i\n"); ())
  and munchExp (T.MEM(T.BINOP(T.PLUS, exp, T.CONST i), size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"(%`s0), %`d0\n",
+            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"(%`s0), %`d0\t#j\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(T.BINOP(T.PLUS, T.CONST i, exp), size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"(%`s0), %`d0\n",
+            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"(%`s0), %`d0\t#k\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(T.CONST i, size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", %`d0\n",
+            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", %`d0\t#l\n",
                         src=[],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(exp, size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl (%`s0), %`d0\n",
+            emit(A.OPER{assem="\tmovl (%`s0), %`d0\t#m\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.BINOP(T.PLUS, T.CONST i, e1)) =
         result(fn r => 
-            emit(A.OPER{assem="\taddl $"^Int.toString(i)^", %`d0\n\taddl %`s0, %`d0\n",
+            emit(A.OPER{assem="\taddl $"^Int.toString(i)^", %`d0\t#n\n\taddl %`s0, %`d0\t#o\n",
                         src=[munchExp e1],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.TEMP tmp) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl %`s0, %`d0\n",
+            emit(A.OPER{assem="\tmovl %`s0, %`d0\t#p\n",
                         src=[tmp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.CONST i) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", %`d0\n",
+            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", %`d0\t#q\n",
                         src=[],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.BINOP(T.PLUS, e1, e2)) =
         result(fn r => 
-            emit(A.OPER{assem="\taddl %`s0, %`d0\n\taddl %`s1, %`d0\n",
+            emit(A.OPER{assem="\taddl %`s0, %`d0\t#r\n\taddl %`s1, %`d0\t#s\n",
                         src=[munchExp e1, munchExp e2],
                         dst=[r], 
                         jump=NONE}))
@@ -200,9 +202,11 @@ struct
  fun codegen (stm: T.stm) : A.instr list =
  let
    (* any decs here? *)
- in 
-   munchStm stm;
-   rev(!ilist)
+   val _ = munchStm stm
+   val toReturn = rev(!ilist)
+ in
+   clearIlist();
+   toReturn
  end
 
   

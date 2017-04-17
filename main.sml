@@ -24,6 +24,9 @@ struct
 
             val stms = Canon.linearize body
             val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
+            
+            val _ = map(fn statement => (Printtree.printtree(out, statement))) stms';
+         
             val instrs = List.concat(map C.codegen stms')
 
             (* TODO uncomment this onces all nodes are implemented *)
