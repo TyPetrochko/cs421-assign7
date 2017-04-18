@@ -45,6 +45,11 @@ struct
 
  fun result(gen) = let val t = Temp.newtemp() in gen t; t end
 
+ fun myIntToString i =
+   if i > 0
+   then Int.toString(i)
+   else ("-" ^ Int.toString(~i))
+
    (************************************************************
   The following is an example implementation of mapping pseudo-registers 
   to memory load/store instructions and actual registers.  It is done
@@ -100,95 +105,107 @@ struct
  (* Heavy lifting! *)
  fun munchStm (T.SEQ(a, b)) = (munchStm a; munchStm b)
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, e1, T.CONST i), s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"%`s0, %`d0\t#a\n", (* TODO think this is wrong! *)
-                    src=munchExp(e1),
-                    dst=munchExp(e2)})
-   | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1), s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl "^Int.toString(i)^"%`s0, %`d0\t#b\n",
-                    src=munchExp(e1),
-                    dst=munchExp(e2)})
+        emit(A.MOVE{assem="\tmovl "^myIntToString(i)^"(%`s0), %`d0\t\n", (* TODO think this is wrong! *)
+                    src=munchExp(e2),
+                    dst=munchExp(e1)})
+           (* Not sure if this exists in x86 *)
+   (*| munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1), s1), e2)) = 
+        emit(A.MOVE{assem="\tmovl "^myIntToString(i)^"%`s0, %`d0\t\n",
+                    src=munchExp(e2),
+                    dst=munchExp(e1)})
+                    *)
           (* x86 has no mem-mem MOV *)
    (*| munchStm (T.MOVE(T.MEM(e1, s1), T.MEM(e2, s2))) = 
         emit(A.MOVE{assem="\tmovl (%`s0), (%`d0)\n",
                     src=munchExp(e1),
                     dst=munchExp(e2)})
     *)
-   | munchStm (T.MOVE(T.MEM(T.NAME lab, s1), e1)) = 
-        emit(A.OPER{assem="\tJUST IMPLEMENTED: movl $"^Symbol.name(lab)^", (%`d0)\t#c\n",
+   | munchStm (T.MOVE(e1, T.MEM(T.NAME lab, s1))) = 
+        emit(A.OPER{assem="\tmovl $"^Symbol.name(lab)^", (%`d0)\t\n",
                     src=[],
                     dst=[munchExp(e1)],
                     jump=NONE})
+
+          (* Not sure if this exists in x86 *)
+                    (*
    | munchStm (T.MOVE(T.MEM(T.CONST i, s1), e1)) = 
-        emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", (%`d0)\t#d\n",
-                    src=[],
-                    dst=[munchExp(e1)],
+        emit(A.OPER{assem="\tmovl $"^myIntToString(i)^", (%`d0)\t\n",
+                    src=[munchExp(e1)],
+                    dst=[],
                     jump=NONE})
+                    *)
    | munchStm (T.MOVE(T.MEM(e1, s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl (%`s0), %`d0\t#e\n",
-                    src=munchExp(e1),
-                    dst=munchExp(e2)})
-   | munchStm (T.MOVE(T.TEMP i, e1)) = (* TODO lookup in table! *)
-        emit(A.OPER{assem="\tmovl %`s0, %`d0\t#f\n",
+        emit(A.MOVE{assem="\tmovl %`s0, (%`d0)\t\n",
+                    src=munchExp(e2),
+                    dst=munchExp(e1)})
+   | munchStm (T.MOVE(T.TEMP i, e1)) =
+        emit(A.OPER{assem="\tmovl %`s0, %`d0\t\n",
                     src=[munchExp(e1)],
                     dst=[i],
                     jump=NONE})
    | munchStm (T.EXP(exp)) =
-        emit(A.OPER{assem="\tTODO THIS IS WRONG: movl %`s0, %eax\t#g\n", (* return value! *)
+        emit(A.OPER{assem="\t# This is a no-op\n",
                     src=[munchExp(exp)],
                     dst=[],
                     jump=NONE})
    | munchStm (T.JUMP(T.NAME lab, labels)) =
-        emit(A.OPER{assem="\tjmp "^Symbol.name(lab)^"\t#h\n", (* TODO this is definitely not right! *)
+        emit(A.OPER{assem="\tjmp "^Symbol.name(lab)^"\t\n",
                     src=[],
                     dst=[],
                     jump=SOME(labels)})
-   | munchStm (T.LABEL lab) = emit(A.LABEL{assem="LABEL: "^Symbol.name(lab)^":\n", lab=lab})
-   | munchStm (unknown_stm) = (print ("Node not implemented yet: "^debug_stm(unknown_stm)^"!\t#i\n"); ())
+   | munchStm (T.LABEL lab) = emit(A.LABEL{assem=Symbol.name(lab)^":\n", lab=lab})
+   | munchStm (unknown_stm) = (print ("Node not implemented yet: "^debug_stm(unknown_stm)^"!\t\n"); ())
  and munchExp (T.MEM(T.BINOP(T.PLUS, exp, T.CONST i), size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"(%`s0), %`d0\t#j\n",
+            emit(A.OPER{assem="\tmovl "^myIntToString(i)^"(%`s0), %`d0\t\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(T.BINOP(T.PLUS, T.CONST i, exp), size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl "^Int.toString(i)^"(%`s0), %`d0\t#k\n",
+            emit(A.OPER{assem="\tmovl "^myIntToString(i)^"(%`s0), %`d0\t\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(T.CONST i, size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", %`d0\t#l\n",
+            emit(A.OPER{assem="\tmovl $"^myIntToString(i)^", %`d0\t\n",
                         src=[],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.MEM(exp, size)) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl (%`s0), %`d0\t#m\n",
+            emit(A.OPER{assem="\tmovl (%`s0), %`d0\t\n",
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.BINOP(T.PLUS, T.CONST i, e1)) =
         result(fn r => 
-            emit(A.OPER{assem="\taddl $"^Int.toString(i)^", %`d0\t#n\n\taddl %`s0, %`d0\t#o\n",
+            emit(A.OPER{assem="\taddl $"^myIntToString(i)^", %`d0\t\n\taddl %`s0, %`d0\t\n",
                         src=[munchExp e1],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.TEMP tmp) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl %`s0, %`d0\t#p\n",
+            emit(A.OPER{assem="\tmovl %`s0, %`d0\t\n",
                         src=[tmp],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.CONST i) =
         result(fn r => 
-            emit(A.OPER{assem="\tmovl $"^Int.toString(i)^", %`d0\t#q\n",
+            emit(A.OPER{assem="\tmovl $"^myIntToString(i)^", %`d0\t\n",
+                        src=[],
+                        dst=[r], 
+                        jump=NONE}))
+   | munchExp (T.CALL(T.NAME(lab), elist)) =
+        result(fn r => 
+            emit(A.OPER{assem="\tcall "^Symbol.name(lab)^"\n",
                         src=[],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.BINOP(T.PLUS, e1, e2)) =
         result(fn r => 
-            emit(A.OPER{assem="\taddl %`s0, %`d0\t#r\n\taddl %`s1, %`d0\t#s\n",
+            emit(A.OPER{assem="\taddl %`s0, %`d0\t\n\taddl %`s1, %`d0\t\n",
                         src=[munchExp e1, munchExp e2],
                         dst=[r], 
                         jump=NONE}))
@@ -219,19 +236,20 @@ struct
      val functionBody = ( map(fn (instr, temps) => instr) body )
      val format0 = A.format(
       fn t => let val value = Temp.Table.look(allocation, t)
-              in case value of NONE => ErrorMsg.impossible("procEntryExit: No register for temp "^Int.toString(t))
+              in case value of NONE => ErrorMsg.impossible("procEntryExit: No register for temp "^myIntToString(t))
                     | SOME(reg_str) => regname(reg_str)
               end
      )
-     val prologue = 
-       [A.LABEL{assem=Symbol.name(name)^":\n", lab=name},
+     val prologue =
+       [A.OPER{assem=(".text\n\t.align 4\n.globl "^Symbol.name(name)^"\n\t.type\t"^Symbol.name(name)^",@function\n\n"), dst=[], src=[], jump=NONE},
+        A.LABEL{assem=Symbol.name(name)^":\n", lab=name},
         A.OPER{assem="\tpushl %ebp\n", dst =[], src = [], jump = NONE},
         A.OPER{assem="\tmovl %esp,%ebp\n", dst = [], src = [], jump=NONE} (* Change this to MOVE later *)
        ]
      val epilogue = 
        [A.OPER{assem="\tmovl %ebp,%esp\n", src = [], dst = [], jump=NONE},
         A.OPER{assem="\tpopl %ebp\n", dst = [], src = [], jump = NONE},
-        A.OPER{assem="\tret\n\n", dst = [R.ZERO, R.RA, R.SP], src = [], jump=SOME[]}
+        A.OPER{assem="\tret\n\n", dst = [], src = [], jump=SOME[]}
        ]
 
      val mappedBody = map(fn inst =>

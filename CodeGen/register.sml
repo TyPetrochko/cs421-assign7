@@ -21,8 +21,10 @@ sig
   val initial : register Temp.Table.table
   val registers : register list
   
-  val RA : Temp.temp
-  val ZERO : Temp.temp
+  val EBX : Temp.temp
+  val EIP : Temp.temp
+  val ESI : Temp.temp 
+  val EDI : Temp.temp 
 
 end (* signature REGISTER *)
 
@@ -37,21 +39,14 @@ struct
 
   val SP = Temp.newtemp() (* ESP *)
 
-  val ECX = Temp.newtemp()
-  val EDX = Temp.newtemp()
+  val EBX = Temp.newtemp()(* EBX *)
+  val ECX = Temp.newtemp()(* ECX *)
+  val EDX = Temp.newtemp()(* EDX *)
+  val EIP = Temp.newtemp()(* EIP *)
+  val ESI = Temp.newtemp()(* ESI *)
+  val EDI = Temp.newtemp()(* EDI *)
 
   (* Ones I've added... 16 total registers alltogether! *)
-  val TOC  = Temp.newtemp()
-  val RA   = Temp.newtemp()
-  val ZERO = Temp.newtemp()
-  val ARG1 = Temp.newtemp()
-  val ARG2 = Temp.newtemp()
-  val ARG3 = Temp.newtemp()
-  val ARG4 = Temp.newtemp()
-  val ARG5 = Temp.newtemp()
-  val ARG6 = Temp.newtemp()
-  val ARG7 = Temp.newtemp()
-  val ARG8 = Temp.newtemp()
   (* END of ones I've added *)
 
   (* of course, none of the following should be empty list *)
@@ -63,30 +58,35 @@ struct
   val specialregs : (Temp.temp * register) list = 
     [(SP, "esp"),
      (RV, "eax"),
-     (FP, "ebp")
+     (FP, "ebp"),
+     (ECX, "ecx"),
+     (EDX, "edx"),
+     (EIP, "eip")
     ]
-  val argregs : (Temp.temp * register) list = 
-    [(ARG1, "eax"),
-     (ARG2, "ebx"),
-     (ARG2, "ecx"),
-     (ARG3, "edx"), (* Not sure about next two... *)
-     (ARG4, "esi"),
-     (ARG5, "edi") (* Any more? *)
-    ]
-  val calleesaves : register list = ["ebp", "esi", "edi", "ebx"]
+  val argregs : (Temp.temp * register) list = []
+  val calleesaves : register list = ["ebx", "esi", "edi"]
   val truecallersaves : register list = [] (* ??? *)
-  val callersaves : register list = ["eax", "ecx", "edx", "esp"]
+  val callersaves : register list = []
 
   (* ... other stuff ... *)
   
-  val initial : register Temp.Table.table = 
+  (*val initial : register Temp.Table.table = 
     Temp.Table.enter(
       Temp.Table.enter(
         Temp.Table.enter(Temp.Table.empty, SP, "esp"), RV, "eax"), FP, "ebp")
+        *)
+
+  val initial : register Temp.Table.table =
+    let
+      fun tablify (regpairs) = case regpairs of [] => Temp.Table.empty
+                                  | (tmp, reg)::rest => Temp.Table.enter(tablify rest, tmp, reg)
+    in
+      tablify specialregs
+    end
 
   val registers : register list = 
-    ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", (* 8 real registers *)
-    "f0", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11"] (* 12 pseudo-registers *)
+    ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", (* 9 real registers *)
+    "f0", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10"] (* 11 pseudo-registers *)
 
 
 

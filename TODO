@@ -8,8 +8,15 @@
 
 
 Stuff to do now!
-  - figure out what to put in register.sml
-  - figure out what procEntryExit does
-  - start implementing them
-  - finish munch!
+  - a lot of munchStm's are backwards!
+  - add a call expression
+  - in procEntryExit, we first allocate frame space for:
+      ALL PSEUDO-REGISTERS
+      LOCAL VARS
+      CALLEE-SAVES
+      MAX ARGS
+  - We need to save all the callee-save registers at the beginning, then
+  return them at the end!
+  - call genSpills!!!! in procEntryExit
+
 
