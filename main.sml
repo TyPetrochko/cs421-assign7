@@ -19,13 +19,13 @@ struct
 
     | emitproc out (F.PROC{name, body, frame}) =
         let val _ = print ("Emit " ^ Symbol.name(name) ^ "\n")
-            val _ = Printtree.printtree(out,body);
+            (* val _ = Printtree.printtree(out,body); *)
 
 
             val stms = Canon.linearize body
             val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
             
-            val _ = map(fn statement => (Printtree.printtree(out, statement))) stms';
+            (* val _ = map(fn statement => (Printtree.printtree(out, statement))) stms'; *)
          
             val instrs = List.concat(map C.codegen stms')
 

@@ -1,1 +1,13 @@
-(1 + 2 + 3)
+/* define a recursive function */
+let
+
+/* calculate n! */
+function double(n: int): int = (n + n)
+function simple(n: int): int = n 
+function myprint(i : int) = print(chr(i + ord("0")))
+function printdouble(n : int) = myprint(n + n)
+
+in
+  myprint(double(4))
+end
+

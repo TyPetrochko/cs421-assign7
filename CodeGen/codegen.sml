@@ -24,7 +24,6 @@ sig
                        allocation : R.register Temp.Table.table,
                        formals : Temp.temp list,
                        frame : Frame.frame} -> Assem.instr list
-  
 
 end (* signature CODEGEN *)
 
@@ -45,6 +44,10 @@ struct
 
  fun result(gen) = let val t = Temp.newtemp() in gen t; t end
 
+ fun indexOfHelper (item, lst, i) = case (item, lst) of (_, []) => ErrorMsg.impossible("IndexOf called on list without item")
+                              | (a, b::rest) => if (a = b) then i else indexOfHelper(item, rest, i + 1)
+
+ fun indexOf (item, lst) = indexOfHelper(item, lst, 0)
  fun myIntToString i =
    if i > 0
    then Int.toString(i)
@@ -198,7 +201,7 @@ struct
                         jump=NONE}))
    | munchExp (T.CALL(T.NAME(lab), explist)) =
         result(fn r => 
-            emit(A.OPER{assem="\tcall "^Symbol.name(lab)^"\n",
+            emit(A.OPER{assem="\tcall "^Symbol.name(lab)^"\n\tmovl %eax, %`d0\n",
                         src=[],
                         dst=[r], 
                         jump=NONE}))
@@ -245,13 +248,24 @@ struct
         A.LABEL{assem=Symbol.name(name)^":\n", lab=name},
         A.OPER{assem="\tpushl %ebp\n", dst =[], src = [], jump = NONE},
         A.OPER{assem="\tmovl %esp,%ebp\n", dst = [], src = [], jump=NONE}, (* Change this to MOVE later *)
-        A.OPER{assem="\tsubl $"^myIntToString(frameSize)^", %esp\n", dst = [], src = [], jump=NONE} (* Make space for frame stuff *)
+        A.OPER{assem="\tsubl $"^myIntToString(frameSize)^", %esp \t# make frame space\n", dst = [], src = [], jump=NONE} (* Make space for frame stuff *)
        ]
+     val calleesaveseq = map(fn r =>
+        A.OPER{
+          assem="\tmovl %"^r^", "^myIntToString(R.localsBaseOffset - 4*(!(#locals frame)) - 4*indexOf(r, R.calleesaves))^"(%ebp) \t# saving "^r^"\n",
+          dst = [], src=[], jump = NONE}
+     ) R.calleesaves
      val epilogue = 
        [A.OPER{assem="\tmovl %ebp,%esp\n", src = [], dst = [], jump=NONE},
         A.OPER{assem="\tpopl %ebp\n", dst = [], src = [], jump = NONE},
         A.OPER{assem="\tret\n\n", dst = [], src = [], jump=SOME[]}
        ]
+     
+     val calleerestoreseq = map(fn r =>
+        A.OPER{
+          assem="\tmovl "^myIntToString(R.localsBaseOffset - 4*(!(#locals frame)) - 4*indexOf(r, R.calleesaves))^"(%ebp), %"^r^" \t# restoring "^r^"\n",
+          dst = [], src=[], jump = NONE}
+     ) R.calleesaves
 
      val mappedBody = map(fn inst =>
       case inst of A.OPER{assem, src, dst, jump} => A.OPER{assem= (format0 inst), src=src, dst=dst, jump=jump}
@@ -259,7 +273,7 @@ struct
          | A.LABEL{assem, lab} => A.LABEL{assem=assem, lab=lab}
      ) functionBody
    in
-     prologue @ mappedBody @ epilogue
+     prologue @ calleesaveseq @ mappedBody @ calleerestoreseq @ epilogue
    end
 
  fun string (lab, str) = Symbol.name(lab)^":\n\t.long "^Int.toString(size(str))^"\n\t.string \""^String.toString(str)^"\"\n"
