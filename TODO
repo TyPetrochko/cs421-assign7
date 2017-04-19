@@ -8,7 +8,7 @@
 
 
 Stuff to do now!
-  - a lot of munchStm's are backwards!
+  - MULT/DIV/SUBTRACT
   - add a call expression
   - in procEntryExit, we first allocate frame space for:
       ALL PSEUDO-REGISTERS
@@ -18,5 +18,6 @@ Stuff to do now!
   - We need to save all the callee-save registers at the beginning, then
   return them at the end!
   - call genSpills!!!! in procEntryExit
+  - ADDL is implemented incorrectly
 
 

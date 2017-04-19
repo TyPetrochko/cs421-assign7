@@ -1,0 +1,13 @@
+/* define a recursive function */
+let
+
+/* calculate n! */
+function double(n: int): int = (n + n)
+
+in
+	print(chr(double(3)));
+  print("then...\n");
+  print(chr(5));
+  1
+end
+
