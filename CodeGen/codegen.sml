@@ -180,8 +180,8 @@ struct
                         jump=NONE}))
    | munchExp (T.BINOP(T.PLUS, T.CONST i, e1)) =
         result(fn r => 
-            emit(A.OPER{assem="\taddl $"^myIntToString(i)^", %`d0\t\n", (* maybe wrong? *)
-                        src=[munchExp e1],
+            emit(A.OPER{assem="\tmovl $"^myIntToString(i)^", %`d0\n\taddl %`s0, %`d0\n", (* maybe wrong? *)
+                        src=[munchExp e1, r],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.TEMP tmp) =
@@ -204,8 +204,8 @@ struct
                         jump=NONE}))
    | munchExp (T.BINOP(T.PLUS, e1, e2)) =
         result(fn r => 
-            emit(A.OPER{assem="\taddl %`s1, %`d0\t\n", (* maybe wrong? Originally "\taddl %`s0, %`d0\t\n\taddl %`s1, %`d0\t\n" *)
-                        src=[munchExp e1, munchExp e2],
+            emit(A.OPER{assem="\tmovl %`s0, %`d0\n\taddl %`s1, %`d0\n", (* maybe wrong? Originally "\taddl %`s0, %`d0\t\n\taddl %`s1, %`d0\t\n" *)
+                        src=[munchExp e1, munchExp e2, r],
                         dst=[r], 
                         jump=NONE}))
    | munchExp (T.NAME(label)) =
