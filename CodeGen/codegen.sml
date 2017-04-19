@@ -145,6 +145,11 @@ struct
                     src=[munchExp(e1)],
                     dst=[i],
                     jump=NONE})
+   | munchStm (T.CJUMP(test, lab1, lab2)) =
+        emit(A.OPER{assem="\t# TODO CMP\n",
+                    src=[munchExp(exp)],
+                    dst=[],
+                    jump=NONE})
    | munchStm (T.EXP(exp)) =
         emit(A.OPER{assem="\t# This is a no-op\n",
                     src=[munchExp(exp)],
