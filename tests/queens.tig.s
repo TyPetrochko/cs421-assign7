@@ -178,7 +178,6 @@ L92:
 	movl %ebx, -0(%esp)	
 	call L2
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %eax	
 	jmp L91	
@@ -254,14 +253,12 @@ L26:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L27:
 	movl $-0, %ebx	
 	movl %ebp, %esi	
@@ -358,14 +355,12 @@ L31:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L32:
 	movl $-0, %ebx	
 	movl %ebp, %edi	
@@ -468,14 +463,12 @@ L41:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L42:
 	movl $-0, %ebx	
 	movl %ebp, %edi	
@@ -577,14 +570,12 @@ L51:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L52:
 	movl $1, %ebx	
 	movl %ebp, %esi	
@@ -621,14 +612,12 @@ L56:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L57:
 	movl $1, %ebx	
 	movl %ebp, %esi	
@@ -676,14 +665,12 @@ L61:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L62:
 	movl $1, %ebx	
 	movl %ebp, %esi	
@@ -729,14 +716,12 @@ L66:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L67:
 	movl %ebp, %ebx	
 	movl -244(%ebx), %ebx	
@@ -773,7 +758,6 @@ L67:
 	movl %ebx, -0(%esp)	
 	call L2
 	movl %eax, %ebx
-	# This is a no-op
 	movl $-0, %ebx	
 	movl %ebp, %esi	
 	movl -244(%esi), %esi	
@@ -786,14 +770,12 @@ L71:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L72:
 	movl $-0, %ebx	
 	movl %ebp, %esi	
@@ -830,14 +812,12 @@ L76:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L77:
 	movl $-0, %ebx	
 	movl %ebp, %esi	
@@ -885,14 +865,12 @@ L81:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L82:
 	movl $-0, %ebx	
 	movl %ebp, %esi	
@@ -1097,7 +1075,6 @@ L4:
 	movl %eax, %ebx
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
-	# This is a no-op
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl -244(%ebx), %ebx	
@@ -1130,14 +1107,12 @@ L8:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call exit
 	movl %eax, %ebx
-	# This is a no-op
 L9:
 	movl %ebp, %ebx	
 	movl -248(%ebx), %ebx	
@@ -1171,7 +1146,6 @@ L15:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl -244(%ebx), %ebx	

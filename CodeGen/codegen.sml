@@ -90,6 +90,7 @@ struct
       else
 	  reg
 
+    (* Some helpful debugging tools *)
   fun debug_stm (stm as T.SEQ(_)) = "SEQ"
     | debug_stm (stm as T.LABEL(_)) = "LABEL"
     | debug_stm (stm as T.JUMP(_)) = "JUMP"
@@ -110,21 +111,20 @@ struct
  (* Heavy lifting! *)
  fun munchStm (T.SEQ(a, b)) = (munchStm a; munchStm b)
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP t, T.CONST i), s1), T.CONST i2)) = 
-        emit(A.OPER{assem="\tmovl $"^myIntToString(i2)^", "^myIntToString(i)^"(%`d0)\t\n", (* TODO think this is wrong! *)
+        emit(A.OPER{assem="\tmovl $"^myIntToString(i2)^", "^myIntToString(i)^"(%`d0)\t\n", 
                     src=[],
                     dst=[t],
                     jump=NONE})
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP t, T.CONST i), s1), T.NAME lab)) = 
-        emit(A.OPER{assem="\tmovl $"^Symbol.name(lab)^", "^myIntToString(i)^"(%`d0)\t\n", (* TODO think this is wrong! *)
+        emit(A.OPER{assem="\tmovl $"^Symbol.name(lab)^", "^myIntToString(i)^"(%`d0)\t\n", 
                     src=[],
                     dst=[t],
                     jump=NONE})
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP t, T.CONST i), s1), e2)) = 
-        emit(A.OPER{assem="\tmovl %`s0, "^myIntToString(i)^"(%`d0)\t\n", (* TODO think this is wrong! *)
+        emit(A.OPER{assem="\tmovl %`s0, "^myIntToString(i)^"(%`d0)\t\n", 
                     src=[munchExp(e2)],
                     dst=[t],
                     jump=NONE})
-           (* Not sure if this exists in x86 *)
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, T.TEMP t), s1), e2)) = 
         emit(A.OPER{assem="\tmovl %`s0, "^myIntToString(i)^"(%`d0)\t\n",
                     src=[munchExp(e2)],
@@ -135,15 +135,6 @@ struct
                     src=[],
                     dst=[i],
                     jump=NONE})
-
-          (* Not sure if this exists in x86 *)
-                    (*
-   | munchStm (T.MOVE(T.MEM(T.CONST i, s1), e1)) = 
-        emit(A.OPER{assem="\tmovl $"^myIntToString(i)^", (%`d0)\t\n",
-                    src=[munchExp(e1)],
-                    dst=[],
-                    jump=NONE})
-                    *)
    | munchStm (T.MOVE(T.MEM(e1, s1), e2)) = 
         emit(A.OPER{assem="\tmovl %`s0, (%`d0)\t\n",
                     src=[munchExp(e2)],
@@ -179,7 +170,7 @@ struct
               emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
            | _ => ErrorMsg.impossible("Bad RELOP operator\n"))
    | munchStm (T.EXP(exp)) =
-        emit(A.OPER{assem="\t# This is a no-op\n",
+        emit(A.OPER{assem="", (* Side effects only! *)
                     src=[munchExp(exp)],
                     dst=[],
                     jump=NONE})
@@ -214,23 +205,6 @@ struct
                         src=[munchExp exp],
                         dst=[r], 
                         jump=NONE}))
-
-                        (* Don't worry about these for now! *)
-                        (*
-   | munchExp (T.BINOP(T.PLUS, T.CONST i, e1)) =
-        result(fn r => 
-            emit(A.OPER{assem="\tmovl $"^myIntToString(i)^", %`d0\n\taddl %`s0, %`d0\n", (* maybe wrong? *)
-                        src=[munchExp e1, r],
-                        dst=[r], 
-                        jump=NONE}))
-   | munchExp (T.BINOP(T.MINUS, T.CONST i, e1)) =
-        result(fn r => 
-            emit(A.OPER{assem="\tmovl $"^myIntToString(i)^", %`d0\n\tsubl %`s0, %`d0\n", (* maybe wrong? *)
-                        src=[munchExp e1, r],
-                        dst=[r], 
-                        jump=NONE}))
-
-                        *)
    | munchExp (T.TEMP tmp) =
         result(fn r => 
             emit(A.OPER{assem="\tmovl %`s0, %`d0\t\n",
@@ -249,7 +223,7 @@ struct
                         src=[R.RV],
                         dst=[r, R.RV], 
                         jump=NONE}))
-   | munchExp (T.BINOP(T.DIV, e1, e2)) = (* TODO *)
+   | munchExp (T.BINOP(T.DIV, e1, e2)) = 
         result(fn r => (
           emit(A.OPER{assem="\tmovl $0, %`d0\n",
                           src=[],
@@ -310,14 +284,13 @@ struct
             emit(A.OPER{assem=("\tmovl $"^Symbol.name(label)^", %`d0\t # This should be caught!\n"),
                             src=[],
                             dst=[r],
-                            jump=NONE})) (* TODO this is definitely not right! *)
+                            jump=NONE})) 
    | munchExp unknown_exp = (print ("TODO exp "^debug_exp(unknown_exp)^" not implemented yet!\n");
                   result(fn r => emit(A.OPER
                             {assem="\tmovl %`d0, %`d0\n",
                              src=[], dst=[r], jump=NONE})))
  fun codegen (stm: T.stm) : A.instr list =
  let
-   (* any decs here? *)
    val _ = munchStm stm
    val toReturn = rev(!ilist)
  in
@@ -370,7 +343,7 @@ struct
               in
                   (loadInsn ^ loadRest, src'::srcs')
               end
-      | mapsrcs (_, []) = ("",[]) (* TODO no idea if this is right...? *)
+      | mapsrcs (_, []) = ("",[]) 
 	  (* findit -- like List.find, but returns SOME i, where i is index
 	   * of element, if found
 	   *)
@@ -460,21 +433,26 @@ struct
    let
      fun saytemp t = 
         let val value = Temp.Table.look(allocation, t)
-        in case value of NONE => "potato" (*ErrorMsg.impossible("procEntryExit: No register for temp "^myIntToString(t))*)
-              | SOME(reg_str) => reg_str (* regname(reg_str) *)
+        in case value of NONE => ErrorMsg.impossible("procEntryExit: No register for temp "^myIntToString(t))
+              | SOME(reg_str) => reg_str (* Formatting done later in genSpills *)
         end
      
      val functionBody = genSpills(( map(fn (instr, temps) => instr) body ), saytemp)
-     (* val functionBody = ( map(fn (instr, temps) => instr) body ) *)
 
      val format0 = A.format(saytemp)
      val frameSize = 4 * (R.NPSEUDOREGS + !(#locals frame) + length(R.calleesaves) + !(#maxargs frame))
+
+     (* We need to save callee-save registers and old stack/base pointer *)
      val prologue =
-       [A.OPER{assem=(".text\n\t.align 4\n.globl "^Symbol.name(name)^"\n\t.type\t"^Symbol.name(name)^",@function\n\n"), dst=[], src=[], jump=NONE},
+       [A.OPER{
+          assem=(".text\n\t.align 4\n.globl "^Symbol.name(name)^"\n\t.type\t"^Symbol.name(name)^",@function\n\n"), 
+          dst=[], 
+          src=[], 
+          jump=NONE},
         A.LABEL{assem=Symbol.name(name)^":\n", lab=name},
         A.OPER{assem="\tpushl %ebp\n", dst =[], src = [], jump = NONE},
-        A.OPER{assem="\tmovl %esp,%ebp\n", dst = [], src = [], jump=NONE}, (* Change this to MOVE later *)
-        A.OPER{assem="\tsubl $"^myIntToString(frameSize)^", %esp \t# make frame space\n", dst = [], src = [], jump=NONE} (* Make space for frame stuff *)
+        A.OPER{assem="\tmovl %esp,%ebp\n", dst = [], src = [], jump=NONE},
+        A.OPER{assem="\tsubl $"^myIntToString(frameSize)^", %esp \t# make frame space\n", dst = [], src = [], jump=NONE}
        ]
      val calleesaveseq = map(fn r =>
         A.OPER{

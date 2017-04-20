@@ -13,8 +13,7 @@ struct
   structure C = Codegen
   structure F = C.F
 
-  fun emitproc out (F.DATA {lab, s}) = (print "Hello world!\n";
-    TextIO.output(out,C.string(lab, s)))
+  fun emitproc out (F.DATA {lab, s}) = TextIO.output(out,C.string(lab, s))
                       (*** should really be output(out,C.string(lab,s)) ***)
 
     | emitproc out (F.PROC{name, body, frame}) =
@@ -29,41 +28,22 @@ struct
          
             val instrs = List.concat(map C.codegen stms')
 
-            (* TODO uncomment this onces all nodes are implemented *)
             val (flowgraph, nodelist) = MakeGraph.instrs2graph(instrs)
-            (* not sure what conversion function is for... debugging? *)
             val (igraph, tempConversionFunction) = Liveness.interferenceGraph(flowgraph)
             val alloc = RegAlloc.color {
               interference = igraph,
-              initial = Register.initial (* ??? *),
-              registers = Register.registers (* ??? *)
+              initial = Register.initial,
+              registers = Register.registers
             }
 
             val processedInstrs = C.procEntryExit {name=name,
-              body=(map(fn inst => (inst, [(* TODO *)])) instrs),
+              body=(map(fn inst => (inst, [(* Callee-save only! *)])) instrs),
               allocation=alloc,
               formals = [],
               frame=frame}
             
-            (* 
-             * Once the RegAlloc module is ready, you can get 
-             * (1) a new list of body instrs together with its live 
-             *     temporaries: (Assem.instr * Temp.temp list) list
-             *
-             * (2) a register allocation table
-             *
-             * These information then can be fed into the C.procEntryExit
-             * function to generate the proper function calling sequence,
-             * procedure entry/exit sequences etc.
-             *     
-             *)
-
-             (* Old way of doing things...! *)
-             (* val instrs = List.concat(map C.codegen stms') *)
-            
           val format0 = Assem.format (fn t => "t" ^ Temp.makestring t)
 
-          (* TODO make this processedInstrs *)
          in app (fn i => TextIO.output(out,format0 i)) processedInstrs
         end
 

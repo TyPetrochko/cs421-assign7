@@ -6,14 +6,14 @@
 tigermain:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $164, %esp 	# make frame space
-	movl %ebx, -144(%ebp) 	# saving ebx
-	movl %esi, -148(%ebp) 	# saving esi
-	movl %edi, -152(%ebp) 	# saving edi
+	subl $276, %esp 	# make frame space
+	movl %ebx, -256(%ebp) 	# saving ebx
+	movl %esi, -260(%ebp) 	# saving esi
+	movl %edi, -264(%ebp) 	# saving edi
 L65:
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
-	movl $-132, %esi	
+	movl $-244, %esi	
 	addl %esi, %ebx
 	movl %ebx, %esi	
 	call getch
@@ -24,7 +24,7 @@ L65:
 	movl %ebx, (%esi)	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
-	movl $-136, %esi	
+	movl $-248, %esi	
 	addl %esi, %ebx
 	movl %ebx, %esi	
 	movl %ebp, %ebx	
@@ -39,12 +39,12 @@ L65:
 	movl %ebx, (%esi)	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
-	movl $-140, %esi	
+	movl $-252, %esi	
 	addl %esi, %ebx
 	movl %ebx, %edi	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
-	movl $-132, %esi	
+	movl $-244, %esi	
 	addl %esi, %ebx
 	movl %ebx, %esi	
 	call getch
@@ -69,10 +69,10 @@ L65:
 	movl %ebp, %ebx	
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
-	movl -136(%esi), %esi	
+	movl -248(%esi), %esi	
 	movl %esi, %esi	
 	movl %ebp, %edi	
-	movl -140(%edi), %edi	
+	movl -252(%edi), %edi	
 	movl %edi, %edi	
 	movl %edi, %edi	
 	movl %edi, 8(%esp)	
@@ -90,14 +90,13 @@ L65:
 	movl %ebx, -0(%esp)	
 	call L29
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %eax	
 	jmp L64	
 L64:
-	movl -144(%ebp), %ebx 	# restoring ebx
-	movl -148(%ebp), %esi 	# restoring esi
-	movl -152(%ebp), %edi 	# restoring edi
+	movl -256(%ebp), %ebx 	# restoring ebx
+	movl -260(%ebp), %esi 	# restoring esi
+	movl -264(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
@@ -110,10 +109,10 @@ L64:
 L29:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $148, %esp 	# make frame space
-	movl %ebx, -132(%ebp) 	# saving ebx
-	movl %esi, -136(%ebp) 	# saving esi
-	movl %edi, -140(%ebp) 	# saving edi
+	subl $260, %esp 	# make frame space
+	movl %ebx, -244(%ebp) 	# saving ebx
+	movl %esi, -248(%ebp) 	# saving esi
+	movl %edi, -252(%ebp) 	# saving edi
 L67:
 	movl $-0, %ebx	
 	movl %ebp, %esi	
@@ -135,13 +134,11 @@ L62:
 	movl %ebx, -0(%esp)	
 	call L28
 	movl %eax, %ebx
-	# This is a no-op
 	movl $L60, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl %ebx, %ebx	
@@ -171,9 +168,9 @@ L61:
 	movl %ebx, %ebx	
 	jmp L63	
 L66:
-	movl -132(%ebp), %ebx 	# restoring ebx
-	movl -136(%ebp), %esi 	# restoring esi
-	movl -140(%ebp), %edi 	# restoring edi
+	movl -244(%ebp), %ebx 	# restoring ebx
+	movl -248(%ebp), %esi 	# restoring esi
+	movl -252(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
@@ -186,10 +183,10 @@ L66:
 L28:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $148, %esp 	# make frame space
-	movl %ebx, -132(%ebp) 	# saving ebx
-	movl %esi, -136(%ebp) 	# saving esi
-	movl %edi, -140(%ebp) 	# saving edi
+	subl $260, %esp 	# make frame space
+	movl %ebx, -244(%ebp) 	# saving ebx
+	movl %esi, -248(%ebp) 	# saving esi
+	movl %edi, -252(%ebp) 	# saving edi
 L69:
 	movl $-0, %ebx	
 	movl %ebp, %esi	
@@ -224,7 +221,6 @@ L55:
 	movl %ebx, -0(%esp)	
 	call print
 	movl %eax, %ebx
-	# This is a no-op
 	movl %ebp, %ebx	
 	movl %ebx, %ebx	
 	movl $-0, %esi	
@@ -258,9 +254,9 @@ L52:
 	movl %ebx, %ebx	
 	jmp L54	
 L68:
-	movl -132(%ebp), %ebx 	# restoring ebx
-	movl -136(%ebp), %esi 	# restoring esi
-	movl -140(%ebp), %edi 	# restoring edi
+	movl -244(%ebp), %ebx 	# restoring ebx
+	movl -248(%ebp), %esi 	# restoring esi
+	movl -252(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
@@ -273,10 +269,10 @@ L68:
 L27:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $152, %esp 	# make frame space
-	movl %ebx, -132(%ebp) 	# saving ebx
-	movl %esi, -136(%ebp) 	# saving esi
-	movl %edi, -140(%ebp) 	# saving edi
+	subl $264, %esp 	# make frame space
+	movl %ebx, -244(%ebp) 	# saving ebx
+	movl %esi, -248(%ebp) 	# saving esi
+	movl %edi, -252(%ebp) 	# saving edi
 L71:
 	movl $-0, %ebx	
 	movl %ebp, %esi	
@@ -417,9 +413,9 @@ L35:
 	movl %ebx, %ebx	
 	jmp L37	
 L70:
-	movl -132(%ebp), %ebx 	# restoring ebx
-	movl -136(%ebp), %esi 	# restoring esi
-	movl -140(%ebp), %edi 	# restoring edi
+	movl -244(%ebp), %ebx 	# restoring ebx
+	movl -248(%ebp), %esi 	# restoring esi
+	movl -252(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
@@ -432,14 +428,14 @@ L70:
 L26:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $156, %esp 	# make frame space
-	movl %ebx, -140(%ebp) 	# saving ebx
-	movl %esi, -144(%ebp) 	# saving esi
-	movl %edi, -148(%ebp) 	# saving edi
+	subl $268, %esp 	# make frame space
+	movl %ebx, -252(%ebp) 	# saving ebx
+	movl %esi, -256(%ebp) 	# saving esi
+	movl %edi, -260(%ebp) 	# saving edi
 L73:
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
-	movl $-132, %esi	
+	movl $-244, %esi	
 	addl %esi, %ebx
 	movl %ebx, %esi	
 	movl $4, %ebx	
@@ -455,14 +451,14 @@ L73:
 	movl %ebx, (%esi)	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
-	movl $-136, %esi	
+	movl $-248, %esi	
 	addl %esi, %ebx
 	movl %ebx, %edi	
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
-	movl -132(%esi), %esi	
+	movl -244(%esi), %esi	
 	movl %esi, %esi	
 	movl %esi, %esi	
 	movl %esi, 4(%esp)	
@@ -476,7 +472,7 @@ L73:
 	movl %ebx, (%esi)	
 	movl $-0, %ebx	
 	movl %ebp, %esi	
-	movl -132(%esi), %esi	
+	movl -244(%esi), %esi	
 	movl -0(%esi), %esi	
 	cmpl %ebx, %esi
 	jne L31
@@ -497,7 +493,7 @@ L31:
 	movl %eax, %ebx
 	movl %ebx, %esi	
 	movl %ebp, %ebx	
-	movl -136(%ebx), %ebx	
+	movl -248(%ebx), %ebx	
 	movl %ebx, -0(%esi)	
 	movl %esi, %ebx	
 	movl %ebx, %ebx
@@ -519,9 +515,9 @@ L31:
 	movl %ebx, %ebx	
 	jmp L33	
 L72:
-	movl -140(%ebp), %ebx 	# restoring ebx
-	movl -144(%ebp), %esi 	# restoring esi
-	movl -148(%ebp), %edi 	# restoring edi
+	movl -252(%ebp), %ebx 	# restoring ebx
+	movl -256(%ebp), %esi 	# restoring esi
+	movl -260(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
@@ -546,10 +542,10 @@ L50:
 L45:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $148, %esp 	# make frame space
-	movl %ebx, -132(%ebp) 	# saving ebx
-	movl %esi, -136(%ebp) 	# saving esi
-	movl %edi, -140(%ebp) 	# saving edi
+	subl $260, %esp 	# make frame space
+	movl %ebx, -244(%ebp) 	# saving ebx
+	movl %esi, -248(%ebp) 	# saving esi
+	movl %edi, -252(%ebp) 	# saving edi
 L75:
 	movl $-0, %ebx	
 	movl %ebp, %esi	
@@ -580,7 +576,6 @@ L48:
 	movl %ebx, -0(%esp)	
 	call L45
 	movl %eax, %ebx
-	# This is a no-op
 	movl %ebp, %ebx	
 	movl 12(%ebx), %ebx	
 	movl %ebx, %ebx
@@ -619,12 +614,11 @@ L48:
 	movl %eax, %ebx
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
-	# This is a no-op
 	jmp L49	
 L74:
-	movl -132(%ebp), %ebx 	# restoring ebx
-	movl -136(%ebp), %esi 	# restoring esi
-	movl -140(%ebp), %edi 	# restoring edi
+	movl -244(%ebp), %ebx 	# restoring ebx
+	movl -248(%ebp), %esi 	# restoring esi
+	movl -252(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
@@ -640,19 +634,18 @@ L47:
 L1:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $152, %esp 	# make frame space
-	movl %ebx, -136(%ebp) 	# saving ebx
-	movl %esi, -140(%ebp) 	# saving esi
-	movl %edi, -144(%ebp) 	# saving edi
+	subl $264, %esp 	# make frame space
+	movl %ebx, -248(%ebp) 	# saving ebx
+	movl %esi, -252(%ebp) 	# saving esi
+	movl %edi, -256(%ebp) 	# saving edi
 L77:
-	movl $-0, -132(%ebp)	
+	movl $-0, -244(%ebp)	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call L4
 	movl %eax, %ebx
-	# This is a no-op
 	movl %ebp, %ebx	
 	movl 12(%ebx), %ebx	
 	movl %ebx, %ebx
@@ -663,7 +656,7 @@ L77:
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
 	movl 8(%esi), %esi	
-	movl -132(%esi), %esi	
+	movl -244(%esi), %esi	
 	movl %esi, %esi	
 	movl %esi, %esi	
 	movl %esi, 4(%esp)	
@@ -680,7 +673,7 @@ L24:
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
 	movl 8(%esi), %esi	
-	movl -132(%esi), %esi	
+	movl -244(%esi), %esi	
 	movl %esi, %esi	
 	movl %esi, %esi	
 	movl %esi, 4(%esp)	
@@ -696,24 +689,24 @@ L24:
 	jmp L2
 L2:
 	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
+	movl -244(%ebx), %ebx	
 	movl %ebx, %eax	
 	jmp L76	
 L25:
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
-	movl $-132, %esi	
+	movl $-244, %esi	
 	addl %esi, %ebx
 	movl %ebx, %edi	
 	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
+	movl -244(%ebx), %ebx	
 	movl %ebx, %ebx
 	movl $10, %esi	
 	imul %esi, %ebx
 	movl %ebx, %esi	
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
-	movl -132(%ebx), %ebx	
+	movl -244(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
@@ -740,7 +733,7 @@ L25:
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl %ebx, %ebx
-	movl $-132, %esi	
+	movl $-244, %esi	
 	addl %esi, %ebx
 	movl %ebx, %esi	
 	call getch
@@ -751,9 +744,9 @@ L25:
 	movl %ebx, (%esi)	
 	jmp L24	
 L76:
-	movl -136(%ebp), %ebx 	# restoring ebx
-	movl -140(%ebp), %esi 	# restoring esi
-	movl -144(%ebp), %edi 	# restoring edi
+	movl -248(%ebp), %ebx 	# restoring ebx
+	movl -252(%ebp), %esi 	# restoring esi
+	movl -256(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
@@ -769,15 +762,15 @@ L23:
 L4:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $148, %esp 	# make frame space
-	movl %ebx, -132(%ebp) 	# saving ebx
-	movl %esi, -136(%ebp) 	# saving esi
-	movl %edi, -140(%ebp) 	# saving edi
+	subl $260, %esp 	# make frame space
+	movl %ebx, -244(%ebp) 	# saving ebx
+	movl %esi, -248(%ebp) 	# saving esi
+	movl %edi, -252(%ebp) 	# saving edi
 L20:
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl 8(%ebx), %ebx	
-	movl -132(%ebx), %ebx	
+	movl -244(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl $L15, %esi	
 	movl %esi, %esi	
@@ -796,7 +789,7 @@ L18:
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl 8(%ebx), %ebx	
-	movl -132(%ebx), %ebx	
+	movl -244(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl $L16, %esi	
 	movl %esi, %esi	
@@ -825,7 +818,7 @@ L21:
 	movl 8(%ebx), %ebx	
 	movl 8(%ebx), %ebx	
 	movl %ebx, %ebx
-	movl $-132, %esi	
+	movl $-244, %esi	
 	addl %esi, %ebx
 	movl %ebx, %esi	
 	call getch
@@ -836,9 +829,9 @@ L21:
 	movl %ebx, (%esi)	
 	jmp L20	
 L78:
-	movl -132(%ebp), %ebx 	# restoring ebx
-	movl -136(%ebp), %esi 	# restoring esi
-	movl -140(%ebp), %edi 	# restoring edi
+	movl -244(%ebp), %ebx 	# restoring ebx
+	movl -248(%ebp), %esi 	# restoring esi
+	movl -252(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
@@ -851,15 +844,15 @@ L78:
 L3:
 	pushl %ebp
 	movl %esp,%ebp
-	subl $144, %esp 	# make frame space
-	movl %ebx, -132(%ebp) 	# saving ebx
-	movl %esi, -136(%ebp) 	# saving esi
-	movl %edi, -140(%ebp) 	# saving edi
+	subl $256, %esp 	# make frame space
+	movl %ebx, -244(%ebp) 	# saving ebx
+	movl %esi, -248(%ebp) 	# saving esi
+	movl %edi, -252(%ebp) 	# saving edi
 L80:
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl 8(%ebx), %ebx	
-	movl -132(%ebx), %ebx	
+	movl -244(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
@@ -892,7 +885,7 @@ L8:
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl 8(%ebx), %ebx	
-	movl -132(%ebx), %ebx	
+	movl -244(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
@@ -920,9 +913,9 @@ L11:
 	movl %ebx, %ebx	
 	jmp L10	
 L79:
-	movl -132(%ebp), %ebx 	# restoring ebx
-	movl -136(%ebp), %esi 	# restoring esi
-	movl -140(%ebp), %edi 	# restoring edi
+	movl -244(%ebp), %ebx 	# restoring ebx
+	movl -248(%ebp), %esi 	# restoring esi
+	movl -252(%ebp), %edi 	# restoring edi
 	movl %ebp,%esp
 	popl %ebp
 	ret
