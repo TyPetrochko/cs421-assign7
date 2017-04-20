@@ -51,7 +51,7 @@ struct
 
   (* of course, none of the following should be empty list *)
 
-  val NPSEUDOREGS = 32
+  val NPSEUDOREGS = 60
   val PSEUDOREGS = List.tabulate(NPSEUDOREGS, fn x => (Temp.newtemp(), "f"^Int.toString(x)))
   
   val localsBaseOffset : int = ((~4) * (NPSEUDOREGS + 1)) (* One word for every pseudo reg plus return address *)
