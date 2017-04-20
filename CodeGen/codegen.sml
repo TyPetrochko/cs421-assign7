@@ -25,6 +25,8 @@ sig
                        formals : Temp.temp list,
                        frame : Frame.frame} -> Assem.instr list
 
+  val genSpills : (Assem.instr list * (Temp.temp->string)) -> Assem.instr list
+
 end (* signature CODEGEN *)
 
 structure Codegen : CODEGEN =
@@ -108,20 +110,16 @@ struct
  (* Heavy lifting! *)
  fun munchStm (T.SEQ(a, b)) = (munchStm a; munchStm b)
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP t, T.CONST i), s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl %`s0, "^myIntToString(i)^"(%`d0)\t\n", (* TODO think this is wrong! *)
-                    src=munchExp(e2),
-                    dst=t})
+        emit(A.OPER{assem="\tmovl %`s0, "^myIntToString(i)^"(%`d0)\t\n", (* TODO think this is wrong! *)
+                    src=[munchExp(e2)],
+                    dst=[t],
+                    jump=NONE})
            (* Not sure if this exists in x86 *)
    | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, T.TEMP t), s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl %`s0, "^myIntToString(i)^"(%`d0)\t\n",
-                    src=munchExp(e2),
-                    dst=t})
-          (* x86 has no mem-mem MOV *)
-   (*| munchStm (T.MOVE(T.MEM(e1, s1), T.MEM(e2, s2))) = 
-        emit(A.MOVE{assem="\tmovl (%`s0), (%`d0)\n",
-                    src=munchExp(e1),
-                    dst=munchExp(e2)})
-    *)
+        emit(A.OPER{assem="\tmovl %`s0, "^myIntToString(i)^"(%`d0)\t\n",
+                    src=[munchExp(e2)],
+                    dst=[t],
+                    jump=NONE})
    | munchStm (T.MOVE(T.TEMP i, T.NAME lab)) = 
         emit(A.OPER{assem="\tmovl $"^Symbol.name(lab)^", %`d0\t\n",
                     src=[],
@@ -137,19 +135,39 @@ struct
                     jump=NONE})
                     *)
    | munchStm (T.MOVE(T.MEM(e1, s1), e2)) = 
-        emit(A.MOVE{assem="\tmovl %`s0, (%`d0)\t\n",
-                    src=munchExp(e2),
-                    dst=munchExp(e1)})
+        emit(A.OPER{assem="\tmovl %`s0, (%`d0)\t\n",
+                    src=[munchExp(e2)],
+                    dst=[munchExp(e1)],
+                    jump=NONE})
    | munchStm (T.MOVE(T.TEMP i, e1)) =
         emit(A.OPER{assem="\tmovl %`s0, %`d0\t\n",
                     src=[munchExp(e1)],
                     dst=[i],
                     jump=NONE})
-   | munchStm (T.CJUMP(test, lab1, lab2)) =
-        emit(A.OPER{assem="\t# TODO CMP\n",
-                    src=[munchExp(exp)],
+   | munchStm (T.CJUMP(T.TEST(relop, e1, e2), lab1, lab2)) =
+        (emit(A.OPER{assem="\tcmpl %`s0, %`s1\n",
+                    src=[munchExp(e2), munchExp(e1)],
                     dst=[],
-                    jump=NONE})
+                    jump=NONE});
+        case relop of T.EQ => (
+              emit(A.OPER{assem="\tje "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
+              emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
+           | T.NE =>( 
+              emit(A.OPER{assem="\tjne "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
+              emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
+           | T.LT =>( 
+              emit(A.OPER{assem="\tjl "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
+              emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
+           | T.GT =>( 
+              emit(A.OPER{assem="\tjg "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
+              emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
+           | T.LE =>( 
+              emit(A.OPER{assem="\tjle "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
+              emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
+           | T.GE =>(
+              emit(A.OPER{assem="\tjle "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
+              emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
+           | _ => ErrorMsg.impossible("Bad RELOP operator\n"))
    | munchStm (T.EXP(exp)) =
         emit(A.OPER{assem="\t# This is a no-op\n",
                     src=[munchExp(exp)],
@@ -192,6 +210,12 @@ struct
                         src=[munchExp e1, r],
                         dst=[r], 
                         jump=NONE}))
+   | munchExp (T.BINOP(T.MINUS, T.CONST i, e1)) =
+        result(fn r => 
+            emit(A.OPER{assem="\tmovl $"^myIntToString(i)^", %`d0\n\tsubl %`s0, %`d0\n", (* maybe wrong? *)
+                        src=[munchExp e1, r],
+                        dst=[r], 
+                        jump=NONE}))
    | munchExp (T.TEMP tmp) =
         result(fn r => 
             emit(A.OPER{assem="\tmovl %`s0, %`d0\t\n",
@@ -210,12 +234,39 @@ struct
                         src=[],
                         dst=[r], 
                         jump=NONE}))
-   | munchExp (T.BINOP(T.PLUS, e1, e2)) =
-        result(fn r => 
-            emit(A.OPER{assem="\tmovl %`s0, %`d0\n\taddl %`s1, %`d0\n", (* maybe wrong? Originally "\taddl %`s0, %`d0\t\n\taddl %`s1, %`d0\t\n" *)
-                        src=[munchExp e1, munchExp e2, r],
+   | munchExp (T.BINOP(T.MUL, e1, e2)) =
+        result(fn r => (
+        emit(A.OPER{assem="\tmovl %`s0, %`d0\n",
+                        src=[munchExp e1],
                         dst=[r], 
-                        jump=NONE}))
+                        jump=NONE});
+        emit(A.OPER{assem="\timul %`s0, %`d0\n",
+                        src=[munchExp e2, r],
+                        dst=[r],
+                        jump=NONE})
+        ))
+   | munchExp (T.BINOP(T.PLUS, e1, e2)) =
+        result(fn r => (
+        emit(A.OPER{assem="\tmovl %`s0, %`d0\n",
+                        src=[munchExp e1],
+                        dst=[r], 
+                        jump=NONE});
+        emit(A.OPER{assem="\taddl %`s0, %`d0\n",
+                        src=[munchExp e2, r],
+                        dst=[r],
+                        jump=NONE})
+        ))
+   | munchExp (T.BINOP(T.MINUS, e1, e2)) =
+        result(fn r => (
+        emit(A.OPER{assem="\tmovl %`s0, %`d0\n",
+                        src=[munchExp e1],
+                        dst=[r], 
+                        jump=NONE});
+        emit(A.OPER{assem="\tsubl %`s0, %`d0\n",
+                        src=[munchExp e2, r],
+                        dst=[r],
+                        jump=NONE})
+        ))
    | munchExp (T.NAME(label)) =
         result(fn r => 
             emit(A.LABEL{assem=("TODO THIS SHOULD BE CAUGHT: "^Symbol.name(label)^":\n"), lab=label})) (* TODO this is definitely not right! *)
@@ -234,64 +285,9 @@ struct
  end
 
   
- fun procEntryExit {name : Temp.label, 
-                       body : (Assem.instr * Temp.temp list) list,
-                       allocation : R.register Temp.Table.table,
-                       formals : Temp.temp list,
-                       frame : Frame.frame} :  Assem.instr list =
-   let
-     val functionBody = ( map(fn (instr, temps) => instr) body )
-     val format0 = A.format(
-      fn t => let val value = Temp.Table.look(allocation, t)
-              in case value of NONE => ErrorMsg.impossible("procEntryExit: No register for temp "^myIntToString(t))
-                    | SOME(reg_str) => regname(reg_str)
-              end
-     )
-     val frameSize = 4 * (R.NPSEUDOREGS + !(#locals frame) + length(R.calleesaves) + !(#maxargs frame))
-     val prologue =
-       [A.OPER{assem=(".text\n\t.align 4\n.globl "^Symbol.name(name)^"\n\t.type\t"^Symbol.name(name)^",@function\n\n"), dst=[], src=[], jump=NONE},
-        A.LABEL{assem=Symbol.name(name)^":\n", lab=name},
-        A.OPER{assem="\tpushl %ebp\n", dst =[], src = [], jump = NONE},
-        A.OPER{assem="\tmovl %esp,%ebp\n", dst = [], src = [], jump=NONE}, (* Change this to MOVE later *)
-        A.OPER{assem="\tsubl $"^myIntToString(frameSize)^", %esp \t# make frame space\n", dst = [], src = [], jump=NONE} (* Make space for frame stuff *)
-       ]
-     val calleesaveseq = map(fn r =>
-        A.OPER{
-          assem="\tmovl %"^r^", "^myIntToString(R.localsBaseOffset - 4*(!(#locals frame)) - 4*indexOf(r, R.calleesaves))^"(%ebp) \t# saving "^r^"\n",
-          dst = [], src=[], jump = NONE}
-     ) R.calleesaves
-     val epilogue = 
-       [A.OPER{assem="\tmovl %ebp,%esp\n", src = [], dst = [], jump=NONE},
-        A.OPER{assem="\tpopl %ebp\n", dst = [], src = [], jump = NONE},
-        A.OPER{assem="\tret\n\n", dst = [], src = [], jump=SOME[]}
-       ]
-     
-     val calleerestoreseq = map(fn r =>
-        A.OPER{
-          assem="\tmovl "^myIntToString(R.localsBaseOffset - 4*(!(#locals frame)) - 4*indexOf(r, R.calleesaves))^"(%ebp), %"^r^" \t# restoring "^r^"\n",
-          dst = [], src=[], jump = NONE}
-     ) R.calleesaves
-
-     val mappedBody = map(fn inst =>
-      case inst of A.OPER{assem, src, dst, jump} => A.OPER{assem= (format0 inst), src=src, dst=dst, jump=jump}
-         | A.MOVE{assem, src, dst} => A.MOVE{assem=(format0 inst), src=src, dst=dst}
-         | A.LABEL{assem, lab} => A.LABEL{assem=assem, lab=lab}
-     ) functionBody
-   in
-     prologue @ calleesaveseq @ mappedBody @ calleerestoreseq @ epilogue
-   end
-
  fun string (lab, str) = Symbol.name(lab)^":\n\t.long "^Int.toString(size(str))^"\n\t.string \""^String.toString(str)^"\"\n"
 
-  (* procEntryExit sequence + function calling sequence tune-up 
-   * + mapping pseudo-registers to memory load/store instructions 
-   * and actual registers.
-   * This is a post-pass, to be done after register allocation.
-   *)
- (* fun procEntryExit =  ... *)
 
-
-  (*
 
  (* genSpills -- do our "poor man%`s spilling".  Maps all pseudo-register
   * references to actual registers, by inserting instructions to load/store
@@ -312,7 +308,7 @@ struct
 		      (* it%`s a fake register: *)
 		      let
 			  val _ = print ("loadit(): mapping pseudo-register `" ^ srcnm ^ "' to machine reg. `" ^ (saytemp mreg) ^"'\n");
-			  val loadInsn = "\tmovl\t" ^ (R.regname srcnm) ^ ", " ^ (saytemp mreg) ^ " # load pseudo-register\n"
+			  val loadInsn = "\tmovl\t" ^ (regname srcnm) ^ ", " ^ (saytemp mreg) ^ " # load pseudo-register\n"
 		      in
 			  (loadInsn, mreg)
 		      end
@@ -377,7 +373,7 @@ struct
 			  val mreg=List.nth (newsrcs,idx)
 		      in
 			  if (src <> mreg) then
-			      ("\tmovl\t%`d0, " ^ (R.regname dstnm) ^ " # save pseudo-register\n", mreg::dsts)
+			      ("\tmovl\t%`d0, " ^ (regname dstnm) ^ " # save pseudo-register\n", mreg::dsts)
 			  else
 			      (* no mapping *)
 			      ("", dst::dsts)
@@ -392,7 +388,7 @@ struct
                            * source pseudo-register, we won't end up clobbering
                            * it until after the source has been used...
                            *)
-                          ("\tmovl\t%`d0, " ^ (R.regname dstnm) ^ " # save pseudo-register\n", R.ECX::dsts)
+                          ("\tmovl\t%`d0, " ^ (regname dstnm) ^ " # save pseudo-register\n", R.ECX::dsts)
                       else
                           (* no mapping *)
                           ("", dst::dsts)
@@ -413,6 +409,55 @@ struct
      in
          map mapInstr insns
      end
+ 
+  fun procEntryExit {name : Temp.label, 
+                       body : (Assem.instr * Temp.temp list) list,
+                       allocation : R.register Temp.Table.table,
+                       formals : Temp.temp list,
+                       frame : Frame.frame} :  Assem.instr list =
+   let
+     fun saytemp t = 
+        let val value = Temp.Table.look(allocation, t)
+        in case value of NONE => ErrorMsg.impossible("procEntryExit: No register for temp "^myIntToString(t))
+              | SOME(reg_str) => regname(reg_str)
+        end
+     
+     val functionBody = genSpills(( map(fn (instr, temps) => instr) body ), saytemp)
 
-  ***************************************************)
+     val format0 = A.format(saytemp)
+     val frameSize = 4 * (R.NPSEUDOREGS + !(#locals frame) + length(R.calleesaves) + !(#maxargs frame))
+     val prologue =
+       [A.OPER{assem=(".text\n\t.align 4\n.globl "^Symbol.name(name)^"\n\t.type\t"^Symbol.name(name)^",@function\n\n"), dst=[], src=[], jump=NONE},
+        A.LABEL{assem=Symbol.name(name)^":\n", lab=name},
+        A.OPER{assem="\tpushl %ebp\n", dst =[], src = [], jump = NONE},
+        A.OPER{assem="\tmovl %esp,%ebp\n", dst = [], src = [], jump=NONE}, (* Change this to MOVE later *)
+        A.OPER{assem="\tsubl $"^myIntToString(frameSize)^", %esp \t# make frame space\n", dst = [], src = [], jump=NONE} (* Make space for frame stuff *)
+       ]
+     val calleesaveseq = map(fn r =>
+        A.OPER{
+          assem="\tmovl %"^r^", "^myIntToString(R.localsBaseOffset - 4*(!(#locals frame)) - 4*indexOf(r, R.calleesaves))^"(%ebp) \t# saving "^r^"\n",
+          dst = [], src=[], jump = NONE}
+     ) R.calleesaves
+     val epilogue = 
+       [A.OPER{assem="\tmovl %ebp,%esp\n", src = [], dst = [], jump=NONE},
+        A.OPER{assem="\tpopl %ebp\n", dst = [], src = [], jump = NONE},
+        A.OPER{assem="\tret\n\n", dst = [], src = [], jump=SOME[]}
+       ]
+     
+     val calleerestoreseq = map(fn r =>
+        A.OPER{
+          assem="\tmovl "^myIntToString(R.localsBaseOffset - 4*(!(#locals frame)) - 4*indexOf(r, R.calleesaves))^"(%ebp), %"^r^" \t# restoring "^r^"\n",
+          dst = [], src=[], jump = NONE}
+     ) R.calleesaves
+
+     val mappedBody = map(fn inst =>
+      case inst of A.OPER{assem, src, dst, jump} => A.OPER{assem= (format0 inst), src=src, dst=dst, jump=jump}
+         | A.MOVE{assem, src, dst} => A.MOVE{assem=(format0 inst), src=src, dst=dst}
+         | A.LABEL{assem, lab} => A.LABEL{assem=assem, lab=lab}
+     ) functionBody
+   in
+     prologue @ calleesaveseq @ mappedBody @ calleerestoreseq @ epilogue
+   end
+
+
 end (* structure Codegen *)

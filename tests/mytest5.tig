@@ -1,0 +1,6 @@
+let
+  var count := 0
+  var max := 100
+in
+  while(count < max) do (count := count + 1; print("there are "); print(chr(count + ord("0"))); print(" bottles of beer on the wall\n"))
+end

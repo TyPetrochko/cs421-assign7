@@ -10,15 +10,27 @@ tigermain:
 	movl %ebx, -132(%ebp) 	# saving ebx
 	movl %esi, -136(%ebp) 	# saving esi
 	movl %edi, -140(%ebp) 	# saving edi
-L3:
+L4:
 	movl $L1, %eax	
+	movl %eax, %eax	
+	movl %eax, -0(%esp)	
+	call print
+	movl %eax, %eax
+	# This is a no-op
+	movl $3, %eax	
+	movl %eax, %eax
+	movl $3, %ebx	
+	imul %ebx, %eax
+	movl %eax, %ebx	
+	movl $L2, %eax	
 	movl %eax, %eax	
 	movl %eax, -0(%esp)	
 	call ord
 	movl %eax, %eax
 	movl %eax, %eax	
+	movl %ebx, %ebx	
+	movl %ebx, %ebx
 	movl %eax, %eax	
-	movl $3, %ebx
 	addl %eax, %ebx
 	movl %ebx, %eax	
 	movl %eax, %eax	
@@ -31,8 +43,10 @@ L3:
 	call print
 	movl %eax, %eax
 	movl %eax, %eax	
-	jmp L2	
-L2:
+	movl %eax, %eax	
+	movl %eax, %eax	
+	jmp L3	
+L3:
 	movl -132(%ebp), %ebx 	# restoring ebx
 	movl -136(%ebp), %esi 	# restoring esi
 	movl -140(%ebp), %edi 	# restoring edi
@@ -40,6 +54,9 @@ L2:
 	popl %ebp
 	ret
 
-L1:
+L2:
 	.long 1
 	.string "0"
+L1:
+	.long 10
+	.string "answer is "

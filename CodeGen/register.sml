@@ -51,7 +51,7 @@ struct
 
   (* of course, none of the following should be empty list *)
 
-  val NPSEUDOREGS = 20 
+  val NPSEUDOREGS = 32 
   val localsBaseOffset : int = ((~4) * (NPSEUDOREGS + 1)) (* One word for every pseudo reg plus return address *)
   val paramBaseOffset : int = 8
 
@@ -69,12 +69,6 @@ struct
   val callersaves : register list = []
 
   (* ... other stuff ... *)
-  
-  (*val initial : register Temp.Table.table = 
-    Temp.Table.enter(
-      Temp.Table.enter(
-        Temp.Table.enter(Temp.Table.empty, SP, "esp"), RV, "eax"), FP, "ebp")
-        *)
 
   val initial : register Temp.Table.table =
     let
@@ -85,8 +79,8 @@ struct
     end
 
   val registers : register list = 
-    ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", (* 9 real registers *)
-    "f0", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10"] (* 11 pseudo-registers *)
+    ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip"]
+      @List.tabulate(NPSEUDOREGS, fn x => ("f"^Int.toString(x)))
 
 
 
