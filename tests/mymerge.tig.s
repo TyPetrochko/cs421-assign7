@@ -90,8 +90,8 @@ L65:
 	movl %ebx, -0(%esp)	
 	call L29
 	movl %eax, %ebx
-	# This is a no-op
-	movl $1, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, %ebx	
 	movl %ebx, %eax	
 	jmp L64	
 L64:

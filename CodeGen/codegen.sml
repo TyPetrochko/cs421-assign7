@@ -175,7 +175,7 @@ struct
               emit(A.OPER{assem="\tjle "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
               emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
            | T.GE =>(
-              emit(A.OPER{assem="\tjle "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
+              emit(A.OPER{assem="\tjge "^Symbol.name(lab1)^"\n", src=[], dst=[], jump=SOME([lab1])});
               emit(A.OPER{assem="\tjmp "^Symbol.name(lab2)^"\n", src=[], dst=[], jump=SOME([lab2])}))
            | _ => ErrorMsg.impossible("Bad RELOP operator\n"))
    | munchStm (T.EXP(exp)) =

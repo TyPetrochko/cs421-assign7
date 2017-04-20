@@ -11,157 +11,176 @@ tigermain:
 	movl %esi, -156(%ebp) 	# saving esi
 	movl %edi, -160(%ebp) 	# saving edi
 L92:
-	movl $8, %eax	
-	movl %eax, -132(%ebp)	
-	movl %ebp, %eax	
-	movl %eax, %eax
-	movl $-136, %ebx	
-	addl %ebx, %eax
-	movl %eax, %ecx	
-	movl %ebp, %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl $1, %ebx	
-	addl %ebx, %eax
-	movl %eax, %eax	
-	movl $-0, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, 4(%esp)	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
-	call initArray
-	movl %eax, %eax
-	movl %eax, %eax	
+	movl $8, -132(%ebp)	
 	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
-	movl %eax, %edx	
-	movl %ebx, (%edx)	
-	movl %eax, %eax	
-	movl %ecx, %ebx	
-	movl %eax, (%ebx)	
-	movl %ebp, %eax	
-	movl %eax, %eax
-	movl $-140, %ebx	
-	addl %ebx, %eax
-	movl %eax, %ecx	
-	movl %ebp, %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl $1, %ebx	
-	addl %ebx, %eax
-	movl %eax, %eax	
-	movl $-0, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, 4(%esp)	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
-	call initArray
-	movl %eax, %eax
-	movl %eax, %eax	
-	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
-	movl %eax, %edx	
-	movl %ebx, (%edx)	
-	movl %eax, %eax	
-	movl %ecx, %ebx	
-	movl %eax, (%ebx)	
-	movl %ebp, %eax	
-	movl %eax, %eax
-	movl $-144, %ebx	
-	addl %ebx, %eax
-	movl %eax, %ecx	
-	movl %ebp, %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
-	addl %ebx, %eax
-	movl %eax, %eax
-	movl $1, %ebx	
-	subl %ebx, %eax
-	movl %eax, %eax
-	movl $1, %ebx	
-	addl %ebx, %eax
-	movl %eax, %eax	
-	movl $-0, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, 4(%esp)	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
-	call initArray
-	movl %eax, %eax
-	movl %eax, %eax	
+	movl %ebx, %ebx
+	movl $-136, %esi	
+	addl %esi, %ebx
+	movl %ebx, %edi	
 	movl %ebp, %ebx	
 	movl -132(%ebx), %ebx	
 	movl %ebx, %ebx
-	movl %ebp, %edx	
-	movl -132(%edx), %edx	
-	addl %edx, %ebx
-	movl %ebx, %ebx
-	movl $1, %edx	
-	subl %edx, %ebx
-	movl %eax, %edx	
-	movl %ebx, (%edx)	
-	movl %eax, %eax	
-	movl %ecx, %ebx	
-	movl %eax, (%ebx)	
-	movl %ebp, %eax	
-	movl %eax, %eax
-	movl $-148, %ebx	
-	addl %ebx, %eax
-	movl %eax, %ecx	
-	movl %ebp, %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
-	addl %ebx, %eax
-	movl %eax, %eax
-	movl $1, %ebx	
-	subl %ebx, %eax
-	movl %eax, %eax
-	movl $1, %ebx	
-	addl %ebx, %eax
-	movl %eax, %eax	
-	movl $-0, %ebx	
+	movl $1, %esi	
+	addl %esi, %ebx
 	movl %ebx, %ebx	
+	movl $-0, %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, 4(%esp)	
 	movl %ebx, %ebx	
-	movl %ebx, 4(%esp)	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
+	movl %ebx, -0(%esp)	
 	call initArray
-	movl %eax, %eax
-	movl %eax, %eax	
+	movl %eax, %ebx
+	movl %ebx, %ebx	
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	movl %ebx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %esi, (%ecx)	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %ebx, %ebx	
+	movl %edi, %esi	
+	movl %ebx, (%esi)	
+	movl %ebp, %ebx	
+	movl %ebx, %ebx
+	movl $-140, %esi	
+	addl %esi, %ebx
+	movl %ebx, %edi	
 	movl %ebp, %ebx	
 	movl -132(%ebx), %ebx	
 	movl %ebx, %ebx
-	movl %ebp, %edx	
-	movl -132(%edx), %edx	
-	addl %edx, %ebx
+	movl $1, %esi	
+	addl %esi, %ebx
+	movl %ebx, %ebx	
+	movl $-0, %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, 4(%esp)	
+	movl %ebx, %ebx	
+	movl %ebx, -0(%esp)	
+	call initArray
+	movl %eax, %ebx
+	movl %ebx, %ebx	
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	movl %ebx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %esi, (%ecx)	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %ebx, %ebx	
+	movl %edi, %esi	
+	movl %ebx, (%esi)	
+	movl %ebp, %ebx	
 	movl %ebx, %ebx
-	movl $1, %edx	
-	subl %edx, %ebx
-	movl %eax, %edx	
-	movl %ebx, (%edx)	
-	movl %eax, %eax	
-	movl %ecx, %ebx	
-	movl %eax, (%ebx)	
-	movl %ebp, %eax	
-	movl %eax, %eax	
-	movl $-0, %ebx	
+	movl $-144, %esi	
+	addl %esi, %ebx
+	movl %ebx, %edi	
+	movl %ebp, %ebx	
+	movl -132(%ebx), %ebx	
+	movl %ebx, %ebx
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	addl %esi, %ebx
+	movl %ebx, %ebx
+	movl $1, %esi	
+	subl %esi, %ebx
+	movl %ebx, %ebx
+	movl $1, %esi	
+	addl %esi, %ebx
 	movl %ebx, %ebx	
+	movl $-0, %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, 4(%esp)	
 	movl %ebx, %ebx	
-	movl %ebx, 4(%esp)	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
+	movl %ebx, -0(%esp)	
+	call initArray
+	movl %eax, %ebx
+	movl %ebx, %ebx	
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	movl %esi, %esi
+	movl %ebp, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl -132(%ecx), %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	addl %ecx, %esi
+	movl %esi, %esi
+	movl $1, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	subl %ecx, %esi
+	movl %ebx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %esi, (%ecx)	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %ebx, %ebx	
+	movl %edi, %esi	
+	movl %ebx, (%esi)	
+	movl %ebp, %ebx	
+	movl %ebx, %ebx
+	movl $-148, %esi	
+	addl %esi, %ebx
+	movl %ebx, %edi	
+	movl %ebp, %ebx	
+	movl -132(%ebx), %ebx	
+	movl %ebx, %ebx
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	addl %esi, %ebx
+	movl %ebx, %ebx
+	movl $1, %esi	
+	subl %esi, %ebx
+	movl %ebx, %ebx
+	movl $1, %esi	
+	addl %esi, %ebx
+	movl %ebx, %ebx	
+	movl $-0, %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, 4(%esp)	
+	movl %ebx, %ebx	
+	movl %ebx, -0(%esp)	
+	call initArray
+	movl %eax, %ebx
+	movl %ebx, %ebx	
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	movl %esi, %esi
+	movl %ebp, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl -132(%ecx), %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	addl %ecx, %esi
+	movl %esi, %esi
+	movl $1, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	subl %ecx, %esi
+	movl %ebx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %esi, (%ecx)	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %ebx, %ebx	
+	movl %edi, %esi	
+	movl %ebx, (%esi)	
+	movl %ebp, %ebx	
+	movl %ebx, %ebx	
+	movl $-0, %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, 4(%esp)	
+	movl %ebx, %ebx	
+	movl %ebx, -0(%esp)	
 	call L2
-	movl %eax, %eax
+	movl %eax, %ebx
 	# This is a no-op
-	movl $1, %eax	
-	movl %eax, %eax	
+	movl $1, %ebx	
+	movl %ebx, %eax	
 	jmp L91	
 L91:
 	movl -152(%ebp), %ebx 	# restoring ebx
@@ -193,8 +212,7 @@ L94:
 	je L88
 	jmp L89
 L89:
-	movl $-0, %potato	
-	movl %potato, -132(%ebp)	
+	movl $-0, -132(%ebp)	
 	movl %ebp, %potato	
 	movl 8(%potato), %potato	
 	movl -132(%potato), %potato	
@@ -228,7 +246,7 @@ L86:
 	movl %ebp, %potato	
 	movl -132(%potato), %potato	
 	cmpl %potato, %potato
-	jle L24
+	jge L24
 	jmp L26
 L26:
 	movl $L28, %potato	
@@ -291,7 +309,7 @@ L85:
 	movl %ebp, %potato	
 	movl -132(%potato), %potato	
 	cmpl %potato, %potato
-	jle L22
+	jge L22
 	jmp L87
 L87:
 	movl %ebp, %potato	
@@ -309,7 +327,7 @@ L24:
 	movl %ebp, %potato	
 	movl -132(%potato), %potato	
 	cmpl %potato, %potato
-	jle L26
+	jge L26
 	jmp L25
 L25:
 	jmp L27	
@@ -324,7 +342,7 @@ L34:
 	movl 12(%potato), %potato	
 	addl %potato, %potato
 	cmpl %potato, %potato
-	jle L29
+	jge L29
 	jmp L31
 L31:
 	movl $L33, %potato	
@@ -382,7 +400,7 @@ L29:
 	movl 12(%potato), %potato	
 	addl %potato, %potato
 	cmpl %potato, %potato
-	jle L31
+	jge L31
 	jmp L30
 L30:
 	jmp L32	
@@ -400,7 +418,7 @@ L44:
 	movl 12(%potato), %potato	
 	subl %potato, %potato
 	cmpl %potato, %potato
-	jle L39
+	jge L39
 	jmp L41
 L41:
 	movl $L43, %potato	
@@ -464,7 +482,7 @@ L39:
 	movl 12(%potato), %potato	
 	subl %potato, %potato
 	cmpl %potato, %potato
-	jle L41
+	jge L41
 	jmp L40
 L40:
 	jmp L42	
@@ -473,7 +491,7 @@ L84:
 	movl %ebp, %potato	
 	movl -132(%potato), %potato	
 	cmpl %potato, %potato
-	jle L49
+	jge L49
 	jmp L51
 L51:
 	movl $L53, %potato	
@@ -513,7 +531,7 @@ L52:
 	movl 12(%potato), %potato	
 	addl %potato, %potato
 	cmpl %potato, %potato
-	jle L54
+	jge L54
 	jmp L56
 L56:
 	movl $L58, %potato	
@@ -560,7 +578,7 @@ L57:
 	movl 12(%potato), %potato	
 	subl %potato, %potato
 	cmpl %potato, %potato
-	jle L59
+	jge L59
 	jmp L61
 L61:
 	movl $L63, %potato	
@@ -603,7 +621,7 @@ L62:
 	movl %ebp, %potato	
 	movl 12(%potato), %potato	
 	cmpl %potato, %potato
-	jle L64
+	jge L64
 	jmp L66
 L66:
 	movl $L68, %potato	
@@ -656,7 +674,7 @@ L67:
 	movl %ebp, %potato	
 	movl -132(%potato), %potato	
 	cmpl %potato, %potato
-	jle L69
+	jge L69
 	jmp L71
 L71:
 	movl $L73, %potato	
@@ -696,7 +714,7 @@ L72:
 	movl 12(%potato), %potato	
 	addl %potato, %potato
 	cmpl %potato, %potato
-	jle L74
+	jge L74
 	jmp L76
 L76:
 	movl $L78, %potato	
@@ -743,7 +761,7 @@ L77:
 	movl 12(%potato), %potato	
 	subl %potato, %potato
 	cmpl %potato, %potato
-	jle L79
+	jge L79
 	jmp L81
 L81:
 	movl $L83, %potato	
@@ -791,7 +809,7 @@ L49:
 	movl %ebp, %potato	
 	movl -132(%potato), %potato	
 	cmpl %potato, %potato
-	jle L51
+	jge L51
 	jmp L50
 L50:
 	jmp L52	
@@ -807,7 +825,7 @@ L54:
 	movl 12(%potato), %potato	
 	addl %potato, %potato
 	cmpl %potato, %potato
-	jle L56
+	jge L56
 	jmp L55
 L55:
 	jmp L57	
@@ -826,7 +844,7 @@ L59:
 	movl 12(%potato), %potato	
 	subl %potato, %potato
 	cmpl %potato, %potato
-	jle L61
+	jge L61
 	jmp L60
 L60:
 	jmp L62	
@@ -838,7 +856,7 @@ L64:
 	movl %ebp, %potato	
 	movl 12(%potato), %potato	
 	cmpl %potato, %potato
-	jle L66
+	jge L66
 	jmp L65
 L65:
 	jmp L67	
@@ -850,7 +868,7 @@ L69:
 	movl %ebp, %potato	
 	movl -132(%potato), %potato	
 	cmpl %potato, %potato
-	jle L71
+	jge L71
 	jmp L70
 L70:
 	jmp L72	
@@ -866,7 +884,7 @@ L74:
 	movl 12(%potato), %potato	
 	addl %potato, %potato
 	cmpl %potato, %potato
-	jle L76
+	jge L76
 	jmp L75
 L75:
 	jmp L77	
@@ -885,7 +903,7 @@ L79:
 	movl 12(%potato), %potato	
 	subl %potato, %potato
 	cmpl %potato, %potato
-	jle L81
+	jge L81
 	jmp L80
 L80:
 	jmp L82	
@@ -910,155 +928,157 @@ L1:
 	movl %esi, -144(%ebp) 	# saving esi
 	movl %edi, -148(%ebp) 	# saving edi
 L96:
-	movl $-0, %eax	
-	movl %eax, -132(%ebp)	
-	movl %ebp, %eax	
-	movl 8(%eax), %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl $1, %ebx	
-	subl %ebx, %eax
+	movl $-0, -132(%ebp)	
 	movl %ebp, %ebx	
+	movl 8(%ebx), %ebx	
 	movl -132(%ebx), %ebx	
-	cmpl %eax, %ebx
+	movl %ebx, %ebx
+	movl $1, %esi	
+	subl %esi, %ebx
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	cmpl %ebx, %esi
 	jle L19
 	jmp L3
 L3:
-	movl $L21, %eax	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
+	movl $L21, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, -0(%esp)	
 	call print
-	movl %eax, %eax
-	movl %eax, %eax	
-	movl %eax, %eax	
-	movl %eax, %eax	
+	movl %eax, %ebx
+	movl %ebx, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, %eax	
 	jmp L95	
 L19:
-	movl $-0, %eax	
-	movl %eax, -136(%ebp)	
-	movl %ebp, %eax	
-	movl 8(%eax), %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl $1, %ebx	
-	subl %ebx, %eax
+	movl $-0, -136(%ebp)	
 	movl %ebp, %ebx	
-	movl -136(%ebx), %ebx	
-	cmpl %eax, %ebx
+	movl 8(%ebx), %ebx	
+	movl -132(%ebx), %ebx	
+	movl %ebx, %ebx
+	movl $1, %esi	
+	subl %esi, %ebx
+	movl %ebp, %esi	
+	movl -136(%esi), %esi	
+	cmpl %ebx, %esi
 	jle L16
 	jmp L4
 L4:
-	movl $L18, %eax	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
+	movl $L18, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, -0(%esp)	
 	call print
-	movl %eax, %eax
-	movl %eax, %eax	
-	movl %eax, %eax	
+	movl %eax, %ebx
+	movl %ebx, %ebx	
+	movl %ebx, %ebx	
 	# This is a no-op
-	movl %ebp, %eax	
-	movl 8(%eax), %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl $1, %ebx	
-	subl %ebx, %eax
-	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
-	cmpl %eax, %ebx
-	jle L3
-	jmp L20
-L20:
-	movl %ebp, %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl $1, %ebx	
-	addl %ebx, %eax
-	movl %eax, -132(%ebp)	
-	jmp L19	
-L16:
-	movl $-0, %eax	
-	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
-	cmpl %eax, %ebx
-	jle L6
-	jmp L8
-L8:
-	movl $L10, %eax	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
-	call print
-	movl %eax, %eax
-	# This is a no-op
-	movl $1, %eax	
-	movl %eax, %eax	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
-	call exit
-	movl %eax, %eax
-	# This is a no-op
-L9:
-	movl %ebp, %eax	
-	movl -136(%eax), %eax	
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
-	movl -140(%ebx), %ebx	
+	movl -132(%ebx), %ebx	
 	movl %ebx, %ebx
-	movl %ebp, %ecx	
-	movl -132(%ecx), %ecx	
-	movl %ecx, %ecx
-	movl $1, %edx	
-	addl %edx, %ecx
-	movl %ecx, %ecx
-	movl $4, %edx	
-	imul %edx, %ecx
-	addl %ecx, %ebx
-	movl (%ebx), %ebx	
-	cmpl %eax, %ebx
+	movl $1, %esi	
+	subl %esi, %ebx
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	cmpl %ebx, %esi
+	jge L3
+	jmp L20
+L20:
+	movl %ebp, %ebx	
+	movl -132(%ebx), %ebx	
+	movl %ebx, %ebx
+	movl $1, %esi	
+	addl %esi, %ebx
+	movl %ebx, -132(%ebp)	
+	jmp L19	
+L16:
+	movl $-0, %ebx	
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	cmpl %ebx, %esi
+	jge L6
+	jmp L8
+L8:
+	movl $L10, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, -0(%esp)	
+	call print
+	movl %eax, %ebx
+	# This is a no-op
+	movl $1, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, -0(%esp)	
+	call exit
+	movl %eax, %ebx
+	# This is a no-op
+L9:
+	movl %ebp, %ebx	
+	movl -136(%ebx), %ebx	
+	movl %ebp, %esi	
+	movl 8(%esi), %esi	
+	movl -140(%esi), %esi	
+	movl %esi, %esi
+	movl %ebp, %edi	
+	movl -132(%edi), %edi	
+	movl %edi, %edi
+	movl $1, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	addl %ecx, %edi
+	movl %edi, %edi
+	movl $4, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	imul %ecx, %edi
+	addl %edi, %esi
+	movl (%esi), %esi	
+	cmpl %ebx, %esi
 	je L13
 	jmp L14
 L14:
-	movl $L12, %eax	
+	movl $L12, %ebx	
 L15:
-	movl %eax, %eax	
-	movl %eax, %eax	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
+	movl %ebx, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, %ebx	
+	movl %ebx, -0(%esp)	
 	call print
-	movl %eax, %eax
+	movl %eax, %ebx
 	# This is a no-op
-	movl %ebp, %eax	
-	movl 8(%eax), %eax	
-	movl -132(%eax), %eax	
-	movl %eax, %eax
-	movl $1, %ebx	
-	subl %ebx, %eax
 	movl %ebp, %ebx	
-	movl -136(%ebx), %ebx	
-	cmpl %eax, %ebx
-	jle L4
+	movl 8(%ebx), %ebx	
+	movl -132(%ebx), %ebx	
+	movl %ebx, %ebx
+	movl $1, %esi	
+	subl %esi, %ebx
+	movl %ebp, %esi	
+	movl -136(%esi), %esi	
+	cmpl %ebx, %esi
+	jge L4
 	jmp L17
 L17:
-	movl %ebp, %eax	
-	movl -136(%eax), %eax	
-	movl %eax, %eax
-	movl $1, %ebx	
-	addl %ebx, %eax
-	movl %eax, -136(%ebp)	
+	movl %ebp, %ebx	
+	movl -136(%ebx), %ebx	
+	movl %ebx, %ebx
+	movl $1, %esi	
+	addl %esi, %ebx
+	movl %ebx, -136(%ebp)	
 	jmp L16	
 L6:
-	movl %ebp, %eax	
-	movl 8(%eax), %eax	
-	movl -140(%eax), %eax	
-	movl (%eax), %eax	
 	movl %ebp, %ebx	
-	movl -132(%ebx), %ebx	
-	cmpl %eax, %ebx
-	jle L8
+	movl 8(%ebx), %ebx	
+	movl -140(%ebx), %ebx	
+	movl (%ebx), %ebx	
+	movl %ebp, %esi	
+	movl -132(%esi), %esi	
+	cmpl %ebx, %esi
+	jge L8
 	jmp L7
 L7:
 	jmp L9	
 L13:
-	movl $L11, %eax	
+	movl $L11, %ebx	
 	jmp L15	
 L95:
 	movl -140(%ebp), %ebx 	# restoring ebx
