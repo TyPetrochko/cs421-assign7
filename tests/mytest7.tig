@@ -1,0 +1,2 @@
+(print("answer is "); print(chr((6/3) + ord("0"))))
+

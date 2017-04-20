@@ -1,0 +1,14 @@
+/* define a recursive function */
+let
+
+/* calculate n! */
+function returnsfive(n: int): int = 5
+
+function master(n: int): int = bitch(3)
+function master(): int = bitch(3)
+
+in
+  print(chr(master() + ord("0")))
+end
+
+

@@ -1,0 +1,13 @@
+/* define a recursive function */
+let
+
+/* calculate n! */
+function recurs(n: int): int =
+		(if  (n = 0)
+			then (n)
+    else (recurs(n - 1) + n)) /* Ah ha! If we switch left and right, they are diff! */
+
+in
+  print(chr(recurs(3) + ord("0")))
+end
+

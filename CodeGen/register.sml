@@ -51,7 +51,9 @@ struct
 
   (* of course, none of the following should be empty list *)
 
-  val NPSEUDOREGS = 32 
+  val NPSEUDOREGS = 32
+  val PSEUDOREGS = List.tabulate(NPSEUDOREGS, fn x => (Temp.newtemp(), "f"^Int.toString(x)))
+  
   val localsBaseOffset : int = ((~4) * (NPSEUDOREGS + 1)) (* One word for every pseudo reg plus return address *)
   val paramBaseOffset : int = 8
 
@@ -75,11 +77,12 @@ struct
       fun tablify (regpairs) = case regpairs of [] => Temp.Table.empty
                                   | (tmp, reg)::rest => Temp.Table.enter(tablify rest, tmp, reg)
     in
-      tablify specialregs
+      tablify (specialregs)
     end
 
   val registers : register list = 
-    ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip"]
+    (* ["eax", "ebx" , "ecx", "edx", "esi", "edi", "esp", "ebp", "eip"] *)
+    calleesaves
       @List.tabulate(NPSEUDOREGS, fn x => ("f"^Int.toString(x)))
 
 

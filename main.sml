@@ -25,7 +25,7 @@ struct
             val stms = Canon.linearize body
             val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
             
-            (* val _ = map(fn statement => (Printtree.printtree(out, statement))) stms'; *)
+            val _ = map(fn statement => (Printtree.printtree(out, statement))) stms';
          
             val instrs = List.concat(map C.codegen stms')
 
@@ -38,6 +38,7 @@ struct
               initial = Register.initial (* ??? *),
               registers = Register.registers (* ??? *)
             }
+
             val processedInstrs = C.procEntryExit {name=name,
               body=(map(fn inst => (inst, [(* TODO *)])) instrs),
               allocation=alloc,
