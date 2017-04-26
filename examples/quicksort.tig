@@ -1,0 +1,44 @@
+let
+  type list = {first : int, rest : list}
+
+  /*function getList() : list = 
+    let
+      var buf : string := getchar()
+      var toReturn : list := nil
+    in
+      while(buf <> "\n") do (
+        while(buf = " ") do (buf := getchar());
+        toReturn := (list{first = (ord(buf)- ord("0")), rest = toReturn})
+      );
+      toReturn /* return the list */
+    end
+    */
+
+  function getList () : list =
+    list{first=4, rest=list{first=3, rest=list{first=9, rest=nil}}}
+
+  function insertIn(toInsert : int, l : list) : list =
+    if(l = nil) then (list {first=toInsert, rest=l}) else (
+      if(toInsert <= l.first)
+      then
+        list{first=toInsert, rest=l}
+      else
+        list{first=l.first, rest=insertIn(toInsert, l.rest)}
+    )
+
+  function sortList(toSort : list) : list = /* must specify param type! */
+    if (toSort = nil) then nil else (
+      let
+        var restSorted := sortList(toSort.rest)
+      in
+        insertIn(toSort.first, restSorted)
+      end
+    )
+
+  function printList(toPrint : list) =
+    if(toPrint = nil) then print("\n")
+    else (print("nope\n"))
+in
+  printList(sortList(getList()))
+end
+
