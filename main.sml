@@ -29,22 +29,24 @@ struct
             val instrs = List.concat(map C.codegen stms')
 
             val (flowgraph, nodelist) = MakeGraph.instrs2graph(instrs)
+           
+            (* We'll need this soon!
             val (igraph, tempConversionFunction) = Liveness.interferenceGraph(flowgraph)
             val alloc = RegAlloc.color {
               interference = igraph,
               initial = Register.initial,
               registers = Register.registers
             }
-
             val processedInstrs = C.procEntryExit {name=name,
               body=(map(fn inst => (inst, [(* Callee-save only! *)])) instrs),
               allocation=alloc,
               formals = [],
               frame=frame}
+            *)
             
           val format0 = Assem.format (fn t => "t" ^ Temp.makestring t)
 
-         in app (fn i => TextIO.output(out,format0 i)) processedInstrs
+         in app (fn i => TextIO.output(out,format0 i)) instrs
         end
 
   fun withOpenFile fname f = 

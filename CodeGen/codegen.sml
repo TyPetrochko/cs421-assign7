@@ -219,7 +219,7 @@ struct
                         jump=NONE}))
    | munchExp (T.CALL(T.NAME(lab), explist)) =
         result(fn r => 
-            emit(A.OPER{assem="\tcall "^Symbol.name(lab)^"\n\tmovl %`s0, %`d0\n",
+            emit(A.OPER{assem="\tcall "^Symbol.name(lab)^"\n\tmovl %`s0, %`d0\n", (* TODO may cause bugs!*)
                         src=[R.RV],
                         dst=[r, R.RV], 
                         jump=NONE}))

@@ -1,51 +1,32 @@
-.text
-	.align 4
-.globl tigermain
-	.type	tigermain,@function
-
-tigermain:
-	pushl %ebp
-	movl %esp,%ebp
-	subl $152, %esp 	# make frame space
-	movl %ebx, -136(%ebp) 	# saving ebx
-	movl %esi, -140(%ebp) 	# saving esi
-	movl %edi, -144(%ebp) 	# saving edi
 L2:
-	movl %ebp, %eax	
-	movl %eax, %eax
-	movl $-132, %ebx	
-	addl %ebx, %eax
-	movl %eax, %ecx	
-	movl $1, %eax	
-	movl $10, %edx
-	addl %eax, %edx
-	movl %edx, %eax	
-	movl $-0, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, 4(%esp)	
-	movl %eax, %eax	
-	movl %eax, -0(%esp)	
+	movl %t101, %t174	
+	movl %t174, %t173
+	movl $-244, %t175	
+	addl %t175, %t173
+	movl %t173, %t172	
+	movl $10, %t177	
+	movl %t177, %t176
+	movl $1, %t178	
+	addl %t178, %t176
+	movl %t176, %t170	
+	movl $-0, %t179	
+	movl %t179, %t171	
+	movl %t171, %t180	
+	movl %t180, 4(%t102)	
+	movl %t170, %t181	
+	movl %t181, -0(%t102)	
 	call initArray
-	movl %eax, %eax
-	movl %eax, %eax	
-	movl $10, %ebx	
-	movl %eax, %edx	
-	movl %ebx, (%edx)	
-	movl %eax, %eax	
-	movl %ecx, %ebx	
-	movl %eax, (%ebx)	
-	movl %ebp, %eax	
-	movl -132(%eax), %eax	
-	# This is a no-op
-	movl $1, %eax	
-	movl %eax, %eax	
+	movl %t100, %t182
+	movl %t182, %t169	
+	movl $10, %t183	
+	movl %t169, %t184	
+	movl %t183, (%t184)	
+	movl %t169, %t185	
+	movl %t172, %t186	
+	movl %t185, (%t186)	
+	movl %t101, %t188	
+	movl -244(%t188), %t187	
+	movl $1, %t189	
+	movl %t189, %t100	
 	jmp L1	
 L1:
-	movl -136(%ebp), %ebx 	# restoring ebx
-	movl -140(%ebp), %esi 	# restoring esi
-	movl -144(%ebp), %edi 	# restoring edi
-	movl %ebp,%esp
-	popl %ebp
-	ret
-
