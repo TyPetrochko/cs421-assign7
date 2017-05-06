@@ -1,0 +1,206 @@
+Standard ML of New Jersey v110.80 [built: Tue Jan 17 09:30:42 2017]
+[opening test.sml]
+[autoloading]
+[library $smlnj/cm/cm.cm is stable]
+[library $smlnj/internal/cm-sig-lib.cm is stable]
+[library $/pgraph.cm is stable]
+[library $smlnj/internal/srcpath-lib.cm is stable]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+[scanning sources.cm]
+[library $/ml-yacc-lib.cm is stable]
+[attempting to load plugin $/lex-ext.cm]
+[library $/lex-ext.cm is stable]
+[library $smlnj/cm/tools.cm is stable]
+[library $smlnj/internal/cm-lib.cm is stable]
+[plugin $/lex-ext.cm loaded successfully]
+[attempting to load plugin $/mllex-tool.cm]
+[library $/mllex-tool.cm is stable]
+[plugin $/mllex-tool.cm loaded successfully]
+[attempting to load plugin $/grm-ext.cm]
+[library $/grm-ext.cm is stable]
+[plugin $/grm-ext.cm loaded successfully]
+[attempting to load plugin $/mlyacc-tool.cm]
+[library $/mlyacc-tool.cm is stable]
+[plugin $/mlyacc-tool.cm loaded successfully]
+[parsing (sources.cm):RegAlloc/liveness.sml]
+[library $SMLNJ-LIB/Util/smlnj-lib.cm is stable]
+[library $SMLNJ-ML-YACC-LIB/ml-yacc-lib.cm is stable]
+[loading (sources.cm):FrontEnd/table.sig]
+[loading (sources.cm):FrontEnd/table.sml]
+[loading (sources.cm):FrontEnd/symbol.sml]
+[loading (sources.cm):ItreeGen/temp.sml]
+[loading (sources.cm):FrontEnd/errormsg.sml]
+[loading (sources.cm):RegAlloc/graph.sig]
+[loading (sources.cm):RegAlloc/graph.sml]
+[loading (sources.cm):RegAlloc/dotgraph.sml]
+[loading (sources.cm):RegAlloc/flowgraph.sml]
+[compiling (sources.cm):RegAlloc/liveness.sml]
+[code: 11297, data: 481, env: 745 bytes]
+[loading (sources.cm):reg-std.sig]
+[loading (sources.cm):CodeGen/register.sml]
+[loading (sources.cm):RegAlloc/regalloc.sml]
+[loading (sources.cm):ItreeGen/tree.sml]
+[loading (sources.cm):CodeGen/assem.sml]
+[loading (sources.cm):ItreeGen/frame.sml]
+[loading (sources.cm):CodeGen/codegen.sml]
+[loading (sources.cm):FrontEnd/absyn.sml]
+[loading (sources.cm):ItreeGen/translate.sml]
+[loading (sources.cm):ItreeGen/types.sml]
+[loading (sources.cm):ItreeGen/env.sml]
+[loading (sources.cm):FrontEnd/tiger.grm.sig]
+[loading (sources.cm):FrontEnd/tiger.lex.sml]
+[loading (sources.cm):FrontEnd/tiger.grm.sml]
+[loading (sources.cm):FrontEnd/parse.sml]
+[loading (sources.cm):CodeGen/canon.sml]
+[loading (sources.cm):ItreeGen/printtree.sml]
+[loading (sources.cm):RegAlloc/makegraph.sml]
+[loading (sources.cm):ItreeGen/semant.sml]
+[loading (sources.cm):main.sml]
+[New bindings added.]
+val it = true : bool
+[autoloading]
+[autoloading done]
+Emit tigermain
+Found forward jump edge for label L1
+L2:
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl %`s0, %`d0
+	movl %`s0, %`d0
+		 ---> 	movl $-244, %`d0	
+	movl $-244, %`d0	
+		 ---> 	addl %`s0, %`d0
+	addl %`s0, %`d0
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl $10, %`d0	
+	movl $10, %`d0	
+		 ---> 	movl %`s0, %`d0
+	movl %`s0, %`d0
+		 ---> 	movl $1, %`d0	
+	movl $1, %`d0	
+		 ---> 	addl %`s0, %`d0
+	addl %`s0, %`d0
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl $-0, %`d0	
+	movl $-0, %`d0	
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl %`s0, 4(%`d0)	
+	movl %`s0, 4(%`d0)	
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl %`s0, -0(%`d0)	
+	movl %`s0, -0(%`d0)	
+		 ---> 	call initArray
+	movl %`s0, %`d0
+	call initArray
+	movl %`s0, %`d0
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl $10, %`d0	
+	movl $10, %`d0	
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl %`s0, (%`d0)	
+	movl %`s0, (%`d0)	
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl %`s0, (%`d0)	
+	movl %`s0, (%`d0)	
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	movl -244(%`s0), %`d0	
+	movl -244(%`s0), %`d0	
+		 ---> 		 ---> 	movl $1, %`d0	
+	movl $1, %`d0	
+		 ---> 	movl %`s0, %`d0	
+	movl %`s0, %`d0	
+		 ---> 	jmp L1	
+	jmp L1	
+		 ---> L1:
+L1:
+Printing liveness map:
+Array: 	
+	
+	
+	189 
+	
+	187 
+	188 
+	101 
+	185 101 
+	172 185 101 
+	169 172 101 
+	183 169 172 101 
+	169 183 172 101 
+	169 172 101 
+	182 172 101 
+	100 172 101 
+	181 100 172 101 
+	170 100 172 101 
+	180 170 100 172 101 
+	171 170 100 172 101 
+	179 170 100 172 101 
+	170 100 172 101 
+	176 100 172 101 
+	178 176 100 172 101 
+	176 100 172 101 
+	177 100 172 101 
+	100 172 101 
+	173 100 101 
+	175 173 100 101 
+	173 100 101 
+	174 100 101 
+	101 100 
+Done!
+TODO write show
+val it = () : unit
+[autoloading]
+[autoloading done]
+test.sml:4.1-4.36 Warning: type vars not generalized because of
+   value restriction are instantiated to dummy types (X1,X2,...)
+
+**************************************
+*************** OUTPUT ***************
+**************************************
+
+L2:
+	movl %t101, %t174	
+	movl %t174, %t173
+	movl $-244, %t175	
+	addl %t175, %t173
+	movl %t173, %t172	
+	movl $10, %t177	
+	movl %t177, %t176
+	movl $1, %t178	
+	addl %t178, %t176
+	movl %t176, %t170	
+	movl $-0, %t179	
+	movl %t179, %t171	
+	movl %t171, %t180	
+	movl %t180, 4(%t102)	
+	movl %t170, %t181	
+	movl %t181, -0(%t102)	
+	call initArray
+	movl %t100, %t182
+	movl %t182, %t169	
+	movl $10, %t183	
+	movl %t169, %t184	
+	movl %t183, (%t184)	
+	movl %t169, %t185	
+	movl %t172, %t186	
+	movl %t185, (%t186)	
+	movl %t101, %t188	
+	movl -244(%t188), %t187	
+	movl $1, %t189	
+	movl %t189, %t100	
+	jmp L1	
+L1:

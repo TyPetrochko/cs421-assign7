@@ -21,6 +21,8 @@ sig
    
   val show : igraph -> unit
 
+  val showLiveset : Flow.flowgraph * (Assem.instr * Flow.Graph.node) list  * Assem.instr list-> unit
+
 end (* signature LIVENESS *)
 
 structure Liveness : LIVENESS = 
@@ -42,7 +44,15 @@ struct
   type liveSet = unit Temp.Table.table * Temp.temp list
   type livenessMap = liveSet Flow.Graph.Table.table
 
-  fun show(IGRAPH{graph, tnode, gtemp, moves}) = print("TODO write show\n")
+  
+  fun show(IGRAPH{graph, tnode, gtemp, moves}) =
+    (app (fn tempNode =>
+            (print("Node "^Int.toString(valOf (Graph.Table.look(gtemp, tempNode)))^" conflicts with: ");
+            app (fn conflictingTempNode =>
+                    print(Int.toString(valOf (Graph.Table.look(gtemp, conflictingTempNode)))^" ")
+              ) (Graph.succ(tempNode));
+             print("\n"))
+      ) (Graph.nodes(graph)))
 
   (* New liveset *)
   fun newLS() = (Temp.Table.empty, [])
@@ -105,6 +115,48 @@ struct
       r(node, nodes, 0)
     end
 
+  (* Extract the temp list from a liveset *)
+  fun lsToTempList((t, l)) = l
+
+  (* Used at the end of main of alg *)
+  fun arraySetToLiveSetTable(lsArray, nodes) =
+    let 
+      val len = length(nodes)
+      fun r(a, n, i) = 
+        if(i = len)
+        then
+          Flow.Graph.Table.empty
+        else
+          Flow.Graph.Table.enter(
+            r(a, n, i + 1),
+            List.nth(n, i),
+            Array.sub(a, i)) (* Here's the bug! *)
+    in
+      r(lsArray, nodes, 0)
+    end
+
+  fun debugArr(arr) =
+    let
+      val len = Array.length(arr)
+      fun r (i) =
+        if (i = len)
+        then print("Done!\n")
+        else (
+          let
+            val temps = lsToTempList(Array.sub(arr, i))
+          in
+            print("\t");
+            (app(fn t => print(Int.toString(t)^" ")) temps);
+            print("\n");
+            r(i + 1)
+          end
+        )
+    in
+      print("Array: ");
+      r(0)
+    end
+
+
   (* This function does the heavy lifting of our program
    * 
    * It uses four arrays: inSet, outSet, inSet', and outSet', and mimics the functionality
@@ -130,22 +182,33 @@ struct
         let
           fun r(a, a', i) =
             if(i = Array.length(a))
-            then false
+            then true
             else
               (if equalLS(Array.sub(a, i), Array.sub(a', i)) 
-               then true
-               else r(a, a', i + 1))
+               then r(a, a', i + 1)
+               else false)
         in
           r(a, a', 0)
         end
 
-      val firstIt = true; (* Hacky way to do do-while loop! *)
+      val continue = ref true (* Hacky way to do do-while loop! *)
+      val iteration = ref 0
     in
       (* Main processing loop of the alg. on page 214! *)
-      while(firstIt orelse (setsMatch(inSet, inSet') andalso setsMatch(outSet, outSet')))
+      while(!continue)
       do (
-        firstIt = false;
+        continue := false;
+        (*
+        print("Begin iteration "^Int.toString(!iteration)^"\n");
+        *)
+        iteration := !iteration + 1;
 
+        (*
+        print("\tin = "); debugArr(inSet);
+        print("\tin' = "); debugArr(inSet');
+        print("\tout = "); debugArr(outSet);
+        print("\tout' = "); debugArr(outSet');
+        *)
 
         Array.copy{di=0, src=inSet, dst=inSet'};
         Array.copy{di=0, src=outSet, dst=outSet'};
@@ -157,8 +220,17 @@ struct
               (* Will throw an error if can't find it! *)
               val use_n = addManyLS(newLS(), valOf (Graph.Table.look(use, List.nth(nodes, i))))
               val def_n = addManyLS(newLS(), valOf (Graph.Table.look(def, List.nth(nodes, i))))
+
+              (*
+              val _ = print("\tLength of use_n is "^Int.toString(length(lsToTempList(use_n)))^"\n")
+              val _ = print("\tLength of def_n is "^Int.toString(length(lsToTempList(def_n)))^"\n")
+              *)
+              val toRet = unionLS(use_n, diffLS(Array.sub(outSet, i), def_n))
             in
-              unionLS(use_n, diffLS(Array.sub(outSet, i), def_n))
+              (*
+              print("\tLength of new in[n] is "^Int.toString(length(lsToTempList(toRet)))^"\n");
+              *)
+              toRet
             end
             ) inSet);
        
@@ -175,27 +247,159 @@ struct
               ) succ);
               !toRet
             end
-            ) outSet)
+            ) outSet);
+
+            continue := not(setsMatch(inSet, inSet') andalso setsMatch(outSet, outSet')) 
       );
+       
+      (* TODO remove this
+      (Array.modifyi(
+        fn (i, s) =>
+          let
+            val def_n = addManyLS(newLS(), valOf (Graph.Table.look(def, List.nth(nodes, i))))
+          in
+            (* addLS(newLS(), 192) *)
+            unionLS(Array.sub(outSet, i), newLS())
+            (* def_n *)
+          end
+          ) outSet);
+
+          *)
+      
+      print("Printing liveness map:\n");
+      debugArr(outSet);
 
       (* Return out set *)
-      arraySetToLiveSetTable(outSet)
+      arraySetToLiveSetTable(outSet, nodes)
     end
 
-  fun buildIgraph(livMap) = 
-    (IGRAPH{graph=Flow.Graph.newGraph(),
+  fun mergeLists([], b) = b
+    | mergeLists(a, []) = a
+    | mergeLists(t::rest, b) =
+      if(List.exists(fn x => (x = t)) b)
+      then(mergeLists(rest, b))
+      else(mergeLists(rest, t::b))
+
+  fun getAllTemps([], _, _) = []
+    | getAllTemps(node::rest, def, use) = 
+    let
+      val defTemps = valOf(Graph.Table.look(def, node))
+      val useTemps = valOf(Graph.Table.look(use, node))
+
+      val restTemps = getAllTemps(rest, def, use)
+
+      val nodesTemps = mergeLists(defTemps, useTemps)
+    in
+      mergeLists(nodesTemps, restTemps)
+    end
+
+
+  fun makeSkeletonIgraph(nodes, def, use) =
+    let
+      val g = Graph.newGraph()
+      val temps = getAllTemps(nodes, def, use)
+
+      fun r [] = IGRAPH{graph=g, 
+                        tnode=Temp.Table.empty, 
+                        gtemp=Graph.Table.empty, 
+                        moves=[]}
+        | r (temp::rest) =
+          let
+            val IGRAPH{graph, tnode, gtemp, moves} = r(rest)
+            val toAdd = Graph.newNode(g)
+          in
+            IGRAPH{graph = g,
+                   tnode = Temp.Table.enter(tnode, temp, toAdd),
+                   gtemp = Graph.Table.enter(gtemp, toAdd, temp),
+                   moves = []}
+          end
+
+    in
+      r(temps)
+    end
+
+  fun buildIgraph(livMap, Flow.FGRAPH{control, def, use, ismove}) =
+    let
+      val instructionNodes = Flow.Graph.nodes(control)
+
+      (* TODO build skeleton graph here *)
+
+      val IGRAPH{graph, tnode, gtemp, moves} = makeSkeletonIgraph(instructionNodes, def, use)
+      
+      fun addInstructionsNodes(instNode) =
+        let
+          (* List of temps defined by this inst *)
+          val defs = valOf(Flow.Graph.Table.look(def, instNode)) 
+          
+          
+          (* List of temps live at this inst *)
+          val (liveSetTable, liveSetList) = valOf(Flow.Graph.Table.look(livMap, instNode))
+        
+        in
+          (* Iterate all over all pairs in cartesian product of defs and liveSetList *)
+          (app (
+            fn (definition) =>
+              (app (
+                fn (liveTemp) =>
+                  (* Add edge definition ----> liveTemp *)
+                  if (not(definition = liveTemp))
+                  then 
+                    (Graph.mk_edge{from=valOf(Temp.Table.look(tnode, definition)),
+                                to=valOf(Temp.Table.look(tnode, liveTemp))};
+                    Graph.mk_edge{to=valOf(Temp.Table.look(tnode, definition)),
+                                from=valOf(Temp.Table.look(tnode, liveTemp))})
+                  else ()
+
+              ) liveSetList)
+          ) defs)
+        end
+    in
+      (app addInstructionsNodes instructionNodes);
+      (IGRAPH{graph=graph, tnode=tnode, gtemp=gtemp, moves=moves},
+          fn (instructionNode) => 
+            (case Graph.Table.look(livMap, instructionNode) of 
+                 NONE => ErrorMsg.impossible("instruction node doesn't exist")
+               | SOME(t, l) => l))
+    end
+    
+    (*(IGRAPH{graph=Flow.Graph.newGraph(),
            tnode=Temp.Table.empty,
            gtemp=Graph.Table.empty,
            moves=[]}, (fn n => []))
+           *)
 
   fun interferenceGraph(flowgraph) =
   let
     val livMap = buildLivenessMap(flowgraph)
-    val (igr, nodeToTempMapping) = buildIgraph(livMap)
+    val (igr, nodeToTempMapping) = buildIgraph(livMap, flowgraph)
   in
     show(igr);
     (igr, nodeToTempMapping)
   end
+  
+  fun showLiveset(flowgraph, assemToNodeMapping, instrs) =
+    let
+      val livMap = buildLivenessMap(flowgraph)
+      fun getNode(inst, []) = ErrorMsg.impossible("Couldn't find instruction")
+        | getNode(inst, (i, n)::rest) = if(inst = i) then n else getNode(inst, rest)
+
+      fun printLiveset((tab, [])) = ()
+        | printLiveset((tab, t::rest)) = (print(Int.toString(t)^" "); printLiveset(tab, rest))
+    in
+      app(
+        fn inst =>
+          let
+            val livset = valOf(Flow.Graph.Table.look(livMap, getNode(inst, assemToNodeMapping)))
+          in
+            (case inst of Assem.OPER{assem, dst, src, jump} => print(assem)
+               | Assem.MOVE{assem, dst, src} => print(assem)
+               | Assem.LABEL{assem, lab} => print(assem));
+            print("\t\t\thas liveset: ");
+            printLiveset(livset);
+            print("\n")
+          end
+      ) instrs 
+    end
 
   (* after constructing the livenessMap, it is quite easy to
      construct the interference graph, just scan each node in

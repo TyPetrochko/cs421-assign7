@@ -22,7 +22,6 @@ L4:
 	movl %ebx, -0(%esp)	
 	call L1
 	movl %eax, %ebx
-	# This is a no-op
 	movl $1, %ebx	
 	movl %ebx, %eax	
 	jmp L3	

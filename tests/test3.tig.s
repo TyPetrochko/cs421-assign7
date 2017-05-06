@@ -1,34 +1,53 @@
+.text
+	.align 4
+.globl tigermain
+	.type	tigermain,@function
+
+tigermain:
+	pushl %ebp
+	movl %esp,%ebp
+	subl $260, %esp 	# make frame space
+	movl %ebx, -248(%ebp) 	# saving ebx
+	movl %esi, -252(%ebp) 	# saving esi
+	movl %edi, -256(%ebp) 	# saving edi
 L4:
-	movl %t101, %t173	
-	movl %t173, %t172
-	movl $-244, %t174	
-	addl %t174, %t172
-	movl %t172, %t171	
-	movl $8, %t175	
-	movl %t175, %t170	
-	movl %t170, %t176	
-	movl %t176, -0(%t102)	
+	movl %ebp, %ebx	
+	movl %ebx, %ebx
+	movl $-244, %esi	
+	addl %esi, %ebx
+	movl %ebx, %ebx	
+	movl $8, %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, -0(%esp) # potato	
 	call allocRecord
-	movl %t100, %t177
-	movl %t177, %t169	
-	movl $L1, -0(%t169)	
-	movl $1000, 4(%t169)	
-	movl %t169, %t178	
-	movl %t171, %t179	
-	movl %t178, (%t179)	
-	movl $L2, %t180	 # This should be caught!
-	movl %t101, %t183	
-	movl -244(%t183), %t182	
-	movl %t182, %t181
-	movl $-0, %t184	
-	addl %t184, %t181
-	movl %t180, (%t181)	
-	movl %t101, %t186	
-	movl -244(%t186), %t185	
-	movl $1, %t187	
-	movl %t187, %t100	
+	movl %eax, %esi
+	movl %esi, %esi	
+	movl $L1, -0(%esi)	
+	movl $1000, 4(%esi)	
+	movl %esi, %esi	
+	movl %ebx, %ebx	
+	movl %esi, (%ebx)	
+	movl $L2, %ebx	 # This should be caught!
+	movl %ebp, %esi	
+	movl -244(%esi), %esi	
+	movl %esi, %esi
+	movl $-0, %edi	
+	addl %edi, %esi
+	movl %ebx, (%esi)	
+	movl %ebp, %ebx	
+	movl -244(%ebx), %ebx	
+	movl $1, %ebx	
+	movl %ebx, %eax	
 	jmp L3	
 L3:
+	movl -248(%ebp), %ebx 	# restoring ebx
+	movl -252(%ebp), %esi 	# restoring esi
+	movl -256(%ebp), %edi 	# restoring edi
+	movl %ebp,%esp
+	popl %ebp
+	ret
+
 L2:
 	.long 8
 	.string "Somebody"

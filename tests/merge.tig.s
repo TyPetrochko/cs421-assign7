@@ -15,78 +15,84 @@ L65:
 	movl %ebx, %ebx
 	movl $-244, %esi	
 	addl %esi, %ebx
-	movl %ebx, %esi	
+	movl %ebx, %ebx	
 	call getch
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
+	movl %eax, %esi
 	movl %esi, %esi	
-	movl %ebx, (%esi)	
+	movl %esi, %esi	
+	movl %ebx, %ebx	
+	movl %esi, (%ebx)	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
 	movl $-248, %esi	
 	addl %esi, %ebx
-	movl %ebx, %esi	
-	movl %ebp, %ebx	
 	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call L26
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
+	movl %ebp, %esi	
 	movl %esi, %esi	
-	movl %ebx, (%esi)	
+	movl %esi, %esi	
+	movl %esi, -0(%esp)	
+	call L26
+	movl %eax, %esi
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %ebx, %ebx	
+	movl %esi, (%ebx)	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
 	movl $-252, %esi	
 	addl %esi, %ebx
-	movl %ebx, %edi	
-	movl %ebp, %ebx	
-	movl %ebx, %ebx
-	movl $-244, %esi	
-	addl %esi, %ebx
-	movl %ebx, %esi	
-	call getch
-	movl %eax, %ebx
 	movl %ebx, %ebx	
-	movl %ebx, %ebx	
+	movl %ebp, %esi	
+	movl %esi, %esi
+	movl $-244, %edi	
+	addl %edi, %esi
 	movl %esi, %esi	
-	movl %ebx, (%esi)	
-	movl %ebp, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
+	call getch
+	movl %eax, %edi
+	movl %edi, %edi	
+	movl %edi, %edi	
+	movl %esi, %esi	
+	movl %edi, (%esi)	
+	movl %ebp, %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, -0(%esp)	
 	call L26
-	movl %eax, %ebx
+	movl %eax, %esi
+	movl %esi, %esi	
+	movl %esi, %esi	
 	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %edi, %esi	
-	movl %ebx, (%esi)	
-	movl %ebp, %ebx	
-	movl %ebx, %ecx	
-	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %esi, (%ebx)	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
-	movl -248(%esi), %esi	
 	movl %esi, %esi	
 	movl %ebp, %edi	
-	movl -252(%edi), %edi	
+	movl -248(%edi), %edi	
 	movl %edi, %edi	
+	movl %ebp, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl -252(%ecx), %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, 8(%esp)	
 	movl %edi, %edi	
-	movl %edi, 8(%esp)	
+	movl %edi, 4(%esp)	
+	movl %esi, %esi	
+	movl %esi, -0(%esp)	
+	call L27
+	movl %eax, %esi
+	movl %esi, %esi	
 	movl %esi, %esi	
 	movl %esi, 4(%esp)	
 	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call L27
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, 4(%esp)	
-	movl	-4(%ebp), %ecx # load pseudo-register
-	movl %ecx, %ebx	
 	movl %ebx, -0(%esp)	
 	call L29
 	movl %eax, %ebx
@@ -304,45 +310,57 @@ L36:
 	movl %ebx, -0(%esp)	
 	call allocRecord
 	movl %eax, %ebx
-	movl %ebx, %ecx	
-	movl	%ecx, -4(%ebp) # save pseudo-register
-	movl %ebp, %ebx	
-	movl 16(%ebx), %ebx	
-	movl -0(%ebx), %ebx	
-	movl %ebx, -0(%ecx)	
-	movl	%ecx, -4(%ebp) # save pseudo-register
-	movl	-4(%ebp), %ecx # load pseudo-register
-	movl %ecx, %ebx	
-	movl %ebx, %ebx
-	movl $4, %esi	
-	addl %esi, %ebx
-	movl %ebx, %ecx	
-	movl	%ecx, -8(%ebp) # save pseudo-register
-	movl %ebp, %ebx	
-	movl 8(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
-	movl 12(%esi), %esi	
+	movl 16(%esi), %esi	
+	movl -0(%esi), %esi	
+	movl %esi, -0(%ebx)	
+	movl %ebx, %esi	
+	movl %esi, %esi
+	movl $4, %edi	
+	addl %edi, %esi
 	movl %esi, %esi	
 	movl %ebp, %edi	
-	movl 16(%edi), %edi	
-	movl 4(%edi), %edi	
+	movl 8(%edi), %edi	
 	movl %edi, %edi	
-	movl %edi, %edi	
-	movl %edi, 8(%esp)	
-	movl %esi, %esi	
-	movl %esi, 4(%esp)	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call L27
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl	-8(%ebp), %ecx # load pseudo-register
-	movl %ecx, %esi	
-	movl %ebx, (%esi)	
+	movl %ebp, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
 	movl	-4(%ebp), %ecx # load pseudo-register
-	movl %ecx, %ebx	
+	movl 12(%ecx), %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %ebp, %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl 16(%ecx), %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl 4(%ecx), %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl %ecx, 8(%esp)	
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, 4(%esp)	
+	movl %edi, %edi	
+	movl %edi, -0(%esp)	
+	call L27
+	movl %eax, %edi
+	movl %edi, %edi	
+	movl %edi, %edi	
+	movl %esi, %esi	
+	movl %edi, (%esi)	
+	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 L37:
 	movl %ebx, %ebx	
@@ -371,45 +389,57 @@ L35:
 	movl %ebx, -0(%esp)	
 	call allocRecord
 	movl %eax, %ebx
-	movl %ebx, %ecx	
-	movl	%ecx, -4(%ebp) # save pseudo-register
-	movl %ebp, %ebx	
-	movl 12(%ebx), %ebx	
-	movl -0(%ebx), %ebx	
-	movl %ebx, -0(%ecx)	
-	movl	%ecx, -4(%ebp) # save pseudo-register
-	movl	-4(%ebp), %ecx # load pseudo-register
-	movl %ecx, %ebx	
-	movl %ebx, %ebx
-	movl $4, %esi	
-	addl %esi, %ebx
-	movl %ebx, %ecx	
-	movl	%ecx, -8(%ebp) # save pseudo-register
-	movl %ebp, %ebx	
-	movl 8(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
 	movl 12(%esi), %esi	
-	movl 4(%esi), %esi	
+	movl -0(%esi), %esi	
+	movl %esi, -0(%ebx)	
+	movl %ebx, %esi	
+	movl %esi, %esi
+	movl $4, %edi	
+	addl %edi, %esi
 	movl %esi, %esi	
 	movl %ebp, %edi	
-	movl 16(%edi), %edi	
+	movl 8(%edi), %edi	
 	movl %edi, %edi	
-	movl %edi, %edi	
-	movl %edi, 8(%esp)	
-	movl %esi, %esi	
-	movl %esi, 4(%esp)	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call L27
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl	-8(%ebp), %ecx # load pseudo-register
-	movl %ecx, %esi	
-	movl %ebx, (%esi)	
+	movl %ebp, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
 	movl	-4(%ebp), %ecx # load pseudo-register
-	movl %ecx, %ebx	
+	movl 12(%ecx), %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl 4(%ecx), %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl %ebp, %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl 16(%ecx), %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -8(%ebp) # save pseudo-register
+	movl	-8(%ebp), %ecx # load pseudo-register
+	movl %ecx, 8(%esp)	
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, %ecx	
+	movl	%ecx, -4(%ebp) # save pseudo-register
+	movl	-4(%ebp), %ecx # load pseudo-register
+	movl %ecx, 4(%esp)	
+	movl %edi, %edi	
+	movl %edi, -0(%esp)	
+	call L27
+	movl %eax, %edi
+	movl %edi, %edi	
+	movl %edi, %edi	
+	movl %esi, %esi	
+	movl %edi, (%esi)	
+	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	jmp L37	
 L70:
@@ -437,39 +467,39 @@ L73:
 	movl %ebx, %ebx
 	movl $-244, %esi	
 	addl %esi, %ebx
-	movl %ebx, %esi	
-	movl $4, %ebx	
 	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call allocRecord
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl $-0, -0(%ebx)	
-	movl %ebx, %ebx	
+	movl $4, %esi	
 	movl %esi, %esi	
-	movl %ebx, (%esi)	
+	movl %esi, %esi	
+	movl %esi, -0(%esp)	
+	call allocRecord
+	movl %eax, %esi
+	movl %esi, %esi	
+	movl $-0, -0(%esi)	
+	movl %esi, %esi	
+	movl %ebx, %ebx	
+	movl %esi, (%ebx)	
 	movl %ebp, %ebx	
 	movl %ebx, %ebx
 	movl $-248, %esi	
 	addl %esi, %ebx
-	movl %ebx, %edi	
-	movl %ebp, %ebx	
-	movl 8(%ebx), %ebx	
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
-	movl -244(%esi), %esi	
+	movl 8(%esi), %esi	
 	movl %esi, %esi	
+	movl %ebp, %edi	
+	movl -244(%edi), %edi	
+	movl %edi, %edi	
+	movl %edi, %edi	
+	movl %edi, 4(%esp)	
 	movl %esi, %esi	
-	movl %esi, 4(%esp)	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
+	movl %esi, -0(%esp)	
 	call L1
-	movl %eax, %ebx
+	movl %eax, %esi
+	movl %esi, %esi	
+	movl %esi, %esi	
 	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %edi, %esi	
-	movl %ebx, (%esi)	
+	movl %esi, (%ebx)	
 	movl $-0, %ebx	
 	movl %ebp, %esi	
 	movl -244(%esi), %esi	
@@ -491,27 +521,27 @@ L31:
 	movl %ebx, -0(%esp)	
 	call allocRecord
 	movl %eax, %ebx
+	movl %ebx, %ebx	
+	movl %ebp, %esi	
+	movl -248(%esi), %esi	
+	movl %esi, -0(%ebx)	
 	movl %ebx, %esi	
-	movl %ebp, %ebx	
-	movl -248(%ebx), %ebx	
-	movl %ebx, -0(%esi)	
-	movl %esi, %ebx	
-	movl %ebx, %ebx
+	movl %esi, %esi
 	movl $4, %edi	
-	addl %edi, %ebx
-	movl %ebx, %edi	
-	movl %ebp, %ebx	
-	movl 8(%ebx), %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call L26
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
+	addl %edi, %esi
+	movl %esi, %esi	
+	movl %ebp, %edi	
+	movl 8(%edi), %edi	
 	movl %edi, %edi	
-	movl %ebx, (%edi)	
-	movl %esi, %ebx	
+	movl %edi, %edi	
+	movl %edi, -0(%esp)	
+	call L26
+	movl %eax, %edi
+	movl %edi, %edi	
+	movl %edi, %edi	
+	movl %esi, %esi	
+	movl %edi, (%esi)	
+	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	jmp L33	
 L72:
@@ -591,18 +621,18 @@ L48:
 	movl $10, %edi	
 	imul %edi, %esi
 	subl %esi, %ebx
-	movl %ebx, %esi	
-	movl $L47, %ebx	
 	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call ord
-	movl %eax, %ebx
-	movl %ebx, %ebx	
+	movl $L47, %esi	
 	movl %esi, %esi	
-	movl %esi, %esi
+	movl %esi, -0(%esp)	
+	call ord
+	movl %eax, %esi
+	movl %esi, %esi	
 	movl %ebx, %ebx	
-	addl %ebx, %esi
-	movl %esi, %ebx	
+	movl %ebx, %ebx
+	movl %esi, %esi	
+	addl %esi, %ebx
+	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	movl %ebx, -0(%esp)	
 	call chr
@@ -651,23 +681,23 @@ L77:
 	movl %ebx, %ebx
 	movl $-0, %esi	
 	addl %esi, %ebx
-	movl %ebx, %edi	
-	movl %ebp, %ebx	
 	movl %ebx, %ebx	
 	movl %ebp, %esi	
-	movl 8(%esi), %esi	
-	movl -244(%esi), %esi	
 	movl %esi, %esi	
+	movl %ebp, %edi	
+	movl 8(%edi), %edi	
+	movl -244(%edi), %edi	
+	movl %edi, %edi	
+	movl %edi, %edi	
+	movl %edi, 4(%esp)	
 	movl %esi, %esi	
-	movl %esi, 4(%esp)	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
+	movl %esi, -0(%esp)	
 	call L3
-	movl %eax, %ebx
+	movl %eax, %esi
+	movl %esi, %esi	
+	movl %esi, %esi	
 	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %edi, %esi	
-	movl %ebx, (%esi)	
+	movl %esi, (%ebx)	
 L24:
 	movl %ebp, %ebx	
 	movl %ebx, %ebx	
@@ -697,51 +727,51 @@ L25:
 	movl %ebx, %ebx
 	movl $-244, %esi	
 	addl %esi, %ebx
-	movl %ebx, %edi	
-	movl %ebp, %ebx	
-	movl -244(%ebx), %ebx	
-	movl %ebx, %ebx
-	movl $10, %esi	
-	imul %esi, %ebx
-	movl %ebx, %esi	
-	movl %ebp, %ebx	
-	movl 8(%ebx), %ebx	
-	movl -244(%ebx), %ebx	
 	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
+	movl %ebp, %esi	
+	movl -244(%esi), %esi	
+	movl %esi, %esi
+	movl $10, %edi	
+	imul %edi, %esi
+	movl %esi, %esi	
+	movl %ebp, %edi	
+	movl 8(%edi), %edi	
+	movl -244(%edi), %edi	
+	movl %edi, %edi	
+	movl %edi, %edi	
+	movl %edi, -0(%esp)	
 	call ord
-	movl %eax, %ebx
-	movl %ebx, %ebx	
+	movl %eax, %edi
+	movl %edi, %edi	
 	movl %esi, %esi	
 	movl %esi, %esi
-	movl %ebx, %ebx	
-	addl %ebx, %esi
+	movl %edi, %edi	
+	addl %edi, %esi
 	movl %esi, %esi	
-	movl $L23, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
+	movl $L23, %edi	
+	movl %edi, %edi	
+	movl %edi, -0(%esp)	
 	call ord
-	movl %eax, %ebx
-	movl %ebx, %ebx	
+	movl %eax, %edi
+	movl %edi, %edi	
 	movl %esi, %esi	
 	movl %esi, %esi
+	movl %edi, %edi	
+	subl %edi, %esi
 	movl %ebx, %ebx	
-	subl %ebx, %esi
-	movl %edi, %ebx	
 	movl %esi, (%ebx)	
 	movl %ebp, %ebx	
 	movl 8(%ebx), %ebx	
 	movl %ebx, %ebx
 	movl $-244, %esi	
 	addl %esi, %ebx
-	movl %ebx, %esi	
+	movl %ebx, %ebx	
 	call getch
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
+	movl %eax, %esi
 	movl %esi, %esi	
-	movl %ebx, (%esi)	
+	movl %esi, %esi	
+	movl %ebx, %ebx	
+	movl %esi, (%ebx)	
 	jmp L24	
 L76:
 	movl -248(%ebp), %ebx 	# restoring ebx
@@ -820,13 +850,13 @@ L21:
 	movl %ebx, %ebx
 	movl $-244, %esi	
 	addl %esi, %ebx
-	movl %ebx, %esi	
+	movl %ebx, %ebx	
 	call getch
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
+	movl %eax, %esi
 	movl %esi, %esi	
-	movl %ebx, (%esi)	
+	movl %esi, %esi	
+	movl %ebx, %ebx	
+	movl %esi, (%ebx)	
 	jmp L20	
 L78:
 	movl -244(%ebp), %ebx 	# restoring ebx
@@ -860,16 +890,16 @@ L80:
 	movl %eax, %ebx
 	movl %ebx, %ebx	
 	movl %ebx, %ebx	
-	movl %ebx, %esi	
-	movl $L6, %ebx	
 	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call ord
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
+	movl $L6, %esi	
 	movl %esi, %esi	
-	cmpl %ebx, %esi
+	movl %esi, -0(%esp)	
+	call ord
+	movl %eax, %esi
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %ebx, %ebx	
+	cmpl %esi, %ebx
 	jge L8
 	jmp L9
 L9:
@@ -881,35 +911,35 @@ L10:
 	jmp L79	
 L8:
 	movl $1, %ebx	
-	movl %ebx, %esi	
-	movl %ebp, %ebx	
-	movl 8(%ebx), %ebx	
-	movl 8(%ebx), %ebx	
-	movl -244(%ebx), %ebx	
 	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
+	movl %ebp, %esi	
+	movl 8(%esi), %esi	
+	movl 8(%esi), %esi	
+	movl -244(%esi), %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, -0(%esp)	
 	call ord
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %edi	
-	movl $L7, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call ord
-	movl %eax, %ebx
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
+	movl %eax, %esi
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl %esi, %esi	
+	movl $L7, %edi	
 	movl %edi, %edi	
-	cmpl %ebx, %edi
+	movl %edi, -0(%esp)	
+	call ord
+	movl %eax, %edi
+	movl %edi, %edi	
+	movl %edi, %edi	
+	movl %esi, %esi	
+	cmpl %edi, %esi
 	jle L11
 	jmp L12
 L12:
 	movl $-0, %ebx	
-	movl %ebx, %esi	
+	movl %ebx, %ebx	
 L11:
-	movl %esi, %ebx	
+	movl %ebx, %ebx	
 	movl %ebx, %ebx	
 	jmp L10	
 L79:
