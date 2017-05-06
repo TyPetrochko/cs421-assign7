@@ -3,18 +3,18 @@
 For my final project, I implemented RegAlloc.
 
 The included source files comprise the fully-function tiger compiler. This
-implementation uses my own CodeGen implementation (CG0) and Wolf's ItreeGen
-implementation (IG1).
+implementation uses Lee's CodeGen implementation (CG0) and Jack's ItreeGen
+implementation (IG2).
 
 My RegAlloc implementation does not require any assumptions to be made from
 ItreeGen or CodeGen beyond basic correctness. This includes correctly-set
 "dst" and "src" temp-lists in CodeGen, and a valid Itree.
 
-Unfortunately, there are a few bugs in Wolf's ItreeGen that make a few tests
-fail; e.g. arridx.tig and several others. Ideally, I would use Lee's CodeGen
-implementation (CG0) alongside Jack's ItreeGen implementation (IG2), but I'm
-currently unable to access the CG0 public directory. This would mitigate the
-failing tests in my current implementation.
+I used Lee's Codegen implementation because in my initial implementation, I
+adapted my code to work with Wolf's ItreeGen implementation, which ultimately
+had a few bugs that failed testcases like arridx.tig, arrtest.tig, etc. Lee's
+CodeGen code, however, works with Jack's implementation - which has since been
+fixed for these cases.
 
 I also assumed that 60 pseudoregisters is sufficient to handle all test-cases.
 
@@ -30,10 +30,4 @@ environment, creates the executable 'a.out', and runs it. To just generate
 the assembly '.s' file, you can invoke
 
 $ ./test.sh file/to/compile.tig
-
-<iii> Desirable features, other changed files
-
-In addition to the files within RegAlloc, I had to change my munchStm() code
-inside CodeGen/codegen.sml to fix a few bugs involving the src and dst
-temp-lists. Everything else remains the same.
 
