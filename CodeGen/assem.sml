@@ -15,7 +15,7 @@ sig
 			    dst: temp,
 			    src: temp}
 
-  val format : (temp->string) -> instr -> string
+  val format : (temp->string) -> (instr -> string)
 end (* signature ASSEM *)
 
 
@@ -47,6 +47,7 @@ structure Assem : ASSEM = struct
                 | f nil = nil
            in implode(f(explode assem))
           end
+          handle e => ErrorMsg.impossible("Can't say "^assem^" with given src and dst")
      in fn OPER{assem,dst,src,jump=NONE} => speak(assem,dst,src,nil)
          | OPER{assem,dst,src,jump=SOME j} => speak(assem,dst,src,j)
          | LABEL{assem,...} => assem

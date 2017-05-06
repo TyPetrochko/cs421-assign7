@@ -1,2 +1,0 @@
-1) Change instrs2graph back to normal calling convention
-2) Change addl in munch to actually output to assem commands

@@ -18,13 +18,9 @@ sig
 
   (* if you like, you can add other stuff here *)
 
+  (* ... *)
   val initial : register Temp.Table.table
   val registers : register list
-  
-  val EBX : Temp.temp
-  val EIP : Temp.temp
-  val ESI : Temp.temp 
-  val EDI : Temp.temp 
 
 end (* signature REGISTER *)
 
@@ -34,44 +30,36 @@ struct
 
   type register = string
 
-  val RV = Temp.newtemp() (* EAX *)
-  val FP = Temp.newtemp() (* EBP *)
+  val RV = Temp.newtemp()
+  val FP = Temp.newtemp()
 
-  val SP = Temp.newtemp() (* ESP *)
+  val SP = Temp.newtemp()
+  val EIP = Temp.newtemp()
 
-  val EBX = Temp.newtemp()(* EBX *)
-  val ECX = Temp.newtemp()(* ECX *)
-  val EDX = Temp.newtemp()(* EDX *)
-  val EIP = Temp.newtemp()(* EIP *)
-  val ESI = Temp.newtemp()(* ESI *)
-  val EDI = Temp.newtemp()(* EDI *)
+  val ECX = Temp.newtemp()
+  val EDX = Temp.newtemp()
 
-  (* Ones I've added... 16 total registers alltogether! *)
-  (* END of ones I've added *)
+  (* make ~1 or 1 depending on how ItreeGen uses it *)
+  val localsOffsetNeg = ~1
 
   (* of course, none of the following should be empty list *)
 
-  val NPSEUDOREGS = 60
-  val PSEUDOREGS = List.tabulate(NPSEUDOREGS, fn x => (Temp.newtemp(), "f"^Int.toString(x)))
-  
-  val localsBaseOffset : int = ((~4) * (NPSEUDOREGS + 1)) (* One word for every pseudo reg plus return address *)
-  val paramBaseOffset : int = 8
+  val NPSEUDOREGS = 40 (* change this to the proper value *)
+  val localsBaseOffset : int = ((localsOffsetNeg * 4) * (NPSEUDOREGS + 1)) (* change this to the proper value *)
+  val paramBaseOffset : int = 8  (* change this to the proper value *)
 
-  val specialregs : (Temp.temp * register) list = 
-    [(SP, "esp"),
-     (RV, "eax"),
-     (FP, "ebp"),
-     (ECX, "ecx"),
-     (EDX, "edx"),
-     (EIP, "eip")
-    ]
+  (* specially referenced for stack management, pseudoregs, return value *)
+  val specialregs : (Temp.temp * register) list = [(EIP, "%eip"), (SP, "%esp"), (FP, "%ebp"), (RV, "%eax"), (ECX, "%ecx"), (EDX, "%edx")]
+  (* arguments are passed on the stack *)
   val argregs : (Temp.temp * register) list = []
-  val calleesaves : register list = ["ebx", "esi", "edi"]
-  val truecallersaves : register list = [] (* ??? *)
-  val callersaves : register list = []
+  (* saved at the beginning of each function and restored at the end *)
+  val calleesaves : register list = ["%ebx", "%esi", "%edi"]
+  val truecallersaves : register list = []
+  (* pseudoregs are automatically saved by the caller because they live on the heap *)
+  fun preg(index) = "f" ^ Int.toString(index)
+  val callersaves : register list = List.tabulate(NPSEUDOREGS, fn x => preg(x))
 
   (* ... other stuff ... *)
-
   val initial : register Temp.Table.table =
     let
       fun tablify (regpairs) = case regpairs of [] => Temp.Table.empty
@@ -79,13 +67,9 @@ struct
     in
       tablify (specialregs)
     end
-
+  
   val registers : register list = 
-    (* ["eax", "ebx" , "ecx", "edx", "esi", "edi", "esp", "ebp", "eip"] *)
-    calleesaves
-      @List.tabulate(NPSEUDOREGS, fn x => ("f"^Int.toString(x)))
-
-
+    calleesaves@callersaves
 
 end (* structure Register *)
 

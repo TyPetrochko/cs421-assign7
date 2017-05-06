@@ -28,10 +28,8 @@ struct
          
             val instrs = List.concat(map C.codegen stms')
 
-            val (flowgraph, nodelist, assemToNodeMapping) = MakeGraph.instrs2graph(instrs)
+            val (flowgraph, nodelist) = MakeGraph.instrs2graph(instrs)
             val (igraph, tempConversionFunction) = Liveness.interferenceGraph(flowgraph)
-
-            val _ = Liveness.showLiveset(flowgraph, assemToNodeMapping,instrs)
             
             val alloc = RegAlloc.color {
               interference = igraph,

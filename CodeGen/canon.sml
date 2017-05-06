@@ -71,6 +71,8 @@ struct
         in (stms, build el)
        end
 
+  exception CanonErr
+
   fun expl(el,f) = reorder do_exp (el,f)
 
   and expl'(el,f) = let val (stms,s) = reorder do_exp (el,f)
@@ -78,30 +80,30 @@ struct
 		    end
 
   and do_stm(T.SEQ(a,b)) = do_stm a % do_stm b
-    | do_stm(T.JUMP(e,labs)) = expl'([e],fn [e] => T.JUMP(e,labs))
+    | do_stm(T.JUMP(e,labs)) = expl'([e],fn [e] => T.JUMP(e,labs) | _ => raise CanonErr)
     | do_stm(T.CJUMP(T.TEST(p,a,b),t,f)) = 
-               expl'([a,b], fn[a,b]=> T.CJUMP(T.TEST(p,a,b),t,f))
+               expl'([a,b], fn[a,b]=> T.CJUMP(T.TEST(p,a,b),t,f) | _ => raise CanonErr)
     | do_stm(T.MOVE(T.TEMP t,T.CALL(e,el))) = 
-             expl'(e::el,fn e::el => T.MOVE(T.TEMP t,T.CALL(e,el)))
-    | do_stm(T.MOVE(T.TEMP t,b)) = expl'([b],fn[b]=>T.MOVE(T.TEMP t,b))
+             expl'(e::el,fn e::el => T.MOVE(T.TEMP t,T.CALL(e,el)) | _ => raise CanonErr)
+    | do_stm(T.MOVE(T.TEMP t,b)) = expl'([b],fn[b]=>T.MOVE(T.TEMP t,b) | _ => raise CanonErr)
     | do_stm(T.MOVE(T.MEM(e,sz),b)) = 
-             expl'([e,b],fn[e,b]=>T.MOVE(T.MEM(e,sz),b))
+             expl'([e,b],fn[e,b]=>T.MOVE(T.MEM(e,sz),b) | _ => raise CanonErr)
     | do_stm(T.MOVE(T.ESEQ(s,e),b)) = do_stm s % do_stm(T.MOVE(e,b))
-    | do_stm(T.MOVE(a,b)) = expl'([a,b], fn[a,b] => T.MOVE(a,b))
+    | do_stm(T.MOVE(a,b)) = expl'([a,b], fn[a,b] => T.MOVE(a,b) | _ => raise CanonErr)
     | do_stm(T.EXP(T.CALL(e,el))) = 
-             expl'(e::el,fn e::el => T.EXP(T.CALL(e,el)))
-    | do_stm(T.EXP e) = expl'([e],fn[e]=>T.EXP e)
-    | do_stm s = expl'([],fn[]=>s)
+             expl'(e::el,fn e::el => T.EXP(T.CALL(e,el)) | _ => raise CanonErr)
+    | do_stm(T.EXP e) = expl'([e],fn[e]=>T.EXP e | _ => raise CanonErr)
+    | do_stm s = expl'([],fn[]=>s | _ => raise CanonErr)
 
-  and do_exp(T.BINOP(p,a,b)) = expl([a,b], fn[a,b]=>T.BINOP(p,a,b))
-    | do_exp(T.CVTOP(p,a,s1,s2)) = expl([a], fn[a]=>T.CVTOP(p,a,s1,s2))
-    | do_exp(T.MEM(a,sz)) = expl([a], fn[a]=>T.MEM(a,sz))
+  and do_exp(T.BINOP(p,a,b)) = expl([a,b], fn[a,b]=>T.BINOP(p,a,b) | _ => raise CanonErr)
+    | do_exp(T.CVTOP(p,a,s1,s2)) = expl([a], fn[a]=>T.CVTOP(p,a,s1,s2) | _ => raise CanonErr)
+    | do_exp(T.MEM(a,sz)) = expl([a], fn[a]=>T.MEM(a,sz) | _ => raise CanonErr)
     | do_exp(T.ESEQ(s,e)) = let val stms = do_stm s
-                             val (stms',e) = expl([e],fn[e]=>e)
+                             val (stms',e) = expl([e],fn[e]=>e | _ => raise CanonErr)
                           in (stms%stms',e)
                          end
-    | do_exp(T.CALL(e,el)) = expl(e::el, fn e::el => T.CALL(e,el))
-    | do_exp e = expl([],fn[]=>e)
+    | do_exp(T.CALL(e,el)) = expl(e::el, fn e::el => T.CALL(e,el) | _ => raise CanonErr)
+    | do_exp e = expl([],fn[]=>e | _ => raise CanonErr)
 
   (* linear gets rid of the top-level SEQ's, producing a list *)
   fun linear(T.SEQ(a,b),l) = linear(a,linear(b,l))
@@ -146,6 +148,7 @@ struct
 
   fun splitlast([x]) = (nil,x)
     | splitlast(h::t) = let val (t',last) = splitlast t in (h::t', last) end
+    | splitlast(_) = (ErrorMsg.impossible("splitlast invalid arguments"); (nil, T.EXP(T.CONST(0))))
 
   fun trace(table,b as (T.LABEL lab :: _),rest) = 
    let val table = Symbol.enter(table, lab, nil)
@@ -166,13 +169,16 @@ struct
 			     @ getnext(table,rest)
                         end)
       | (most, T.JUMP _) => b @ getnext(table,rest)
+      | _ => (ErrorMsg.impossible("invalid arguments"); nil)
      end
+  | trace(_) = (ErrorMsg.impossible("invalid arguments"); nil)
 
   and getnext(table,(b as (T.LABEL lab::_))::rest) = 
            (case Symbol.look(table, lab)
              of SOME(_::_) => trace(table,b,rest)
               | _ => getnext(table,rest))
     | getnext(table,nil) = nil
+    | getnext(_,_) = (ErrorMsg.impossible("getnext invalid arguments"); nil)
 
   fun traceSchedule(blocks,done) = 
        getnext(foldr enterblock Symbol.empty blocks, blocks)

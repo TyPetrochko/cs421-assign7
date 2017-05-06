@@ -1,239 +1,78 @@
-.text
-	.align 4
-.globl tigermain
-	.type	tigermain,@function
-
-tigermain:
-	pushl %ebp
-	movl %esp,%ebp
-	subl $264, %esp 	# make frame space
-	movl %ebx, -248(%ebp) 	# saving ebx
-	movl %esi, -252(%ebp) 	# saving esi
-	movl %edi, -256(%ebp) 	# saving edi
-L20:
-	movl %ebp, %ebx	
-	movl %ebx, %ebx
-	movl $-244, %esi	
-	addl %esi, %ebx
-	movl %ebx, %ebx	
-	movl $10, %esi	
-	movl %esi, %esi
-	movl $1, %edi	
-	addl %edi, %esi
-	movl %esi, %esi	
-	movl $-0, %edi	
-	movl %edi, %edi	
-	movl %edi, %edi	
-	movl %edi, 4(%esp)	
-	movl %esi, %esi	
-	movl %esi, -0(%esp)	
-	call initArray
-	movl %eax, %esi
-	movl %esi, %esi	
-	movl $10, %edi	
-	movl %esi, %ecx	
-	movl	%ecx, -4(%ebp) # save pseudo-register
-	movl	-4(%ebp), %edx # load pseudo-register
-	movl %edi, (%edx)	
-	movl %esi, %esi	
-	movl %ebx, %ebx	
-	movl %esi, (%ebx)	
-	movl $L1, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl $-0, %ebx	
-	movl $1, %esi	
-	cmpl %ebx, %esi
-	jge L2
-	jmp L4
+.globl	tigermain					# make linkable
+	.type	tigermain, @function					# identify it as a function (for linking)
+tigermain:					# entry point for function
+	pushl	%ebp					# save previous frame pointer
+	movl	%esp, %ebp					# set new frame pointer
+	subl	$184, %esp					# make room for 40 pseudoregs, 1 locals, 3 callee-saves, and 2 maxargs,
+	movl	%ebx, 8(%esp)					# callee-save register
+	movl	%esi, 12(%esp)					# callee-save register
+	movl	%edi, 16(%esp)					# callee-save register
 L4:
-	movl $L6, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl $1, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call exit
-	movl %eax, %ebx
-L5:
-	movl %ebp, %ebx	
-	movl -244(%ebx), %ebx	
-	movl %ebx, %esi	
-	movl $L1, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl %esi, %ebx	
-	movl %ebx, %ebx
-	movl $1, %esi	
-	movl %esi, %esi
-	movl $1, %edi	
-	addl %edi, %esi
-	movl %esi, %esi
-	movl $4, %edi	
-	imul %edi, %esi
-	addl %esi, %ebx
-	movl (%ebx), %ebx	
-	movl $L7, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl $-0, %ebx	
-	movl $9, %esi	
-	cmpl %ebx, %esi
-	jge L8
-	jmp L10
-L10:
-	movl $L12, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl $1, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call exit
-	movl %eax, %ebx
-L11:
-	movl %ebp, %ebx	
-	movl -244(%ebx), %ebx	
-	movl %ebx, %esi	
-	movl $L7, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl %esi, %ebx	
-	movl %ebx, %ebx
-	movl $9, %esi	
-	movl %esi, %esi
-	movl $1, %edi	
-	addl %edi, %esi
-	movl %esi, %esi
-	movl $4, %edi	
-	imul %edi, %esi
-	addl %esi, %ebx
-	movl (%ebx), %ebx	
-	movl $L13, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl $-0, %ebx	
-	movl $4, %esi	
-	cmpl %ebx, %esi
-	jge L14
-	jmp L16
-L16:
-	movl $L18, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl $1, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call exit
-	movl %eax, %ebx
-L17:
-	movl %ebp, %ebx	
-	movl -244(%ebx), %ebx	
-	movl %ebx, %esi	
-	movl $L13, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl %esi, %ebx	
-	movl %ebx, %ebx
-	movl $4, %esi	
-	movl %esi, %esi
-	movl $1, %edi	
-	addl %edi, %esi
-	movl %esi, %esi
-	movl $4, %edi	
-	imul %edi, %esi
-	addl %esi, %ebx
-	movl (%ebx), %ebx	
-	movl %ebx, %eax	
-	jmp L19	
-L2:
-	movl $L1, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl %ebp, %ebx	
-	movl -244(%ebx), %ebx	
-	movl (%ebx), %ebx	
-	movl $1, %esi	
-	cmpl %ebx, %esi
-	jge L4
-	jmp L3
+	movl	%ebp, %ebx					# run MOVE statement with src:t101, dst:t114,
+	addl	$-164, %ebx					# evaluate PLUS expression src: dst:t114
+	movl	%ebx, %ebx					# run MOVE statement with src:t114, dst:t113,
+	movl	$10, 0(%esp)					# argument 0 for initArray from src:
+	movl	$0, 4(%esp)					# argument 1 for initArray from src:
+	call	initArray					# call function initArray, putting result in EAX
+	movl	%eax, %esi					# move result of initArray to desired register:t115
+	movl	%esi, %esi					# run MOVE statement with src:t115, dst:t112,
+	movl	%esi, (%ebx)					# run MOVE statement with src:t112,t113, dst:
+	movl	-164(%ebp), %ebx					# run MOVE statement with src:t101, dst:t106,
+	movl	$L0, 0(%esp)					# argument 0 for print from src:
+	call	print					# call function print, putting result in EAX
+	movl	%eax, %esi					# move result of print to desired register:t116
+	movl	$1, %esi					# run MOVE statement with src: dst:t107,
+	movl	%ebx, 0(%esp)					# argument 0 for checkArrayBounds from src:t106,
+	movl	%esi, 4(%esp)					# argument 1 for checkArrayBounds from src:t107,
+	call	checkArrayBounds					# call function checkArrayBounds, putting result in EAX
+	movl	%eax, %edi					# move result of checkArrayBounds to desired register:t117
+	movl	%ebx, %ebx					# run MOVE statement with src:t106, dst:t118,
+	movl	%esi, %esi					# run MOVE statement with src:t107, dst:t119,
+	imull	$4, %esi					# evaluate MUL expression src: dst:t119
+	addl	%esi, %ebx					# evaluate PLUS expression src:t119, dst:t118
+	movl	(%ebx), %ebx					# evaluate MEM expression src:t118, dst:t120
+	movl	-164(%ebp), %ebx					# run MOVE statement with src:t101, dst:t108,
+	movl	$L1, 0(%esp)					# argument 0 for print from src:
+	call	print					# call function print, putting result in EAX
+	movl	%eax, %esi					# move result of print to desired register:t121
+	movl	$9, %esi					# run MOVE statement with src: dst:t109,
+	movl	%ebx, 0(%esp)					# argument 0 for checkArrayBounds from src:t108,
+	movl	%esi, 4(%esp)					# argument 1 for checkArrayBounds from src:t109,
+	call	checkArrayBounds					# call function checkArrayBounds, putting result in EAX
+	movl	%eax, %edi					# move result of checkArrayBounds to desired register:t122
+	movl	%ebx, %ebx					# run MOVE statement with src:t108, dst:t123,
+	movl	%esi, %esi					# run MOVE statement with src:t109, dst:t124,
+	imull	$4, %esi					# evaluate MUL expression src: dst:t124
+	addl	%esi, %ebx					# evaluate PLUS expression src:t124, dst:t123
+	movl	(%ebx), %ebx					# evaluate MEM expression src:t123, dst:t125
+	movl	-164(%ebp), %ebx					# run MOVE statement with src:t101, dst:t110,
+	movl	$L2, 0(%esp)					# argument 0 for print from src:
+	call	print					# call function print, putting result in EAX
+	movl	%eax, %esi					# move result of print to desired register:t126
+	movl	$4, %esi					# run MOVE statement with src: dst:t111,
+	movl	%ebx, 0(%esp)					# argument 0 for checkArrayBounds from src:t110,
+	movl	%esi, 4(%esp)					# argument 1 for checkArrayBounds from src:t111,
+	call	checkArrayBounds					# call function checkArrayBounds, putting result in EAX
+	movl	%eax, %edi					# move result of checkArrayBounds to desired register:t127
+	movl	%ebx, %ebx					# run MOVE statement with src:t110, dst:t128,
+	movl	%esi, %esi					# run MOVE statement with src:t111, dst:t129,
+	imull	$4, %esi					# evaluate MUL expression src: dst:t129
+	addl	%esi, %ebx					# evaluate PLUS expression src:t129, dst:t128
+	movl	(%ebx), %eax					# run MOVE statement with src:t128, dst:t100,
+	jmp	L3					# unconditional jump
 L3:
-	jmp L5	
-L8:
-	movl $L7, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl %ebp, %ebx	
-	movl -244(%ebx), %ebx	
-	movl (%ebx), %ebx	
-	movl $9, %esi	
-	cmpl %ebx, %esi
-	jge L10
-	jmp L9
-L9:
-	jmp L11	
-L14:
-	movl $L13, %ebx	
-	movl %ebx, %ebx	
-	movl %ebx, -0(%esp)	
-	call print
-	movl %eax, %ebx
-	movl %ebp, %ebx	
-	movl -244(%ebx), %ebx	
-	movl (%ebx), %ebx	
-	movl $4, %esi	
-	cmpl %ebx, %esi
-	jge L16
-	jmp L15
-L15:
-	jmp L17	
-L19:
-	movl -248(%ebp), %ebx 	# restoring ebx
-	movl -252(%ebp), %esi 	# restoring esi
-	movl -256(%ebp), %edi 	# restoring edi
-	movl %ebp,%esp
-	popl %ebp
-	ret
-
-L18:
-	.long 21
-	.string "Error: out-of-bounds\n"
-L13:
-	.long 14
-	.string "RANDOM ACCESS\n"
-L12:
-	.long 21
-	.string "Error: out-of-bounds\n"
-L7:
-	.long 12
-	.string "UPPER BOUND\n"
-L6:
-	.long 21
-	.string "Error: out-of-bounds\n"
-L1:
-	.long 12
-	.string "LOWER BOUND\n"
+	movl	8(%esp), %ebx					# restore callee-saved register
+	movl	12(%esp), %esi					# restore callee-saved register
+	movl	16(%esp), %edi					# restore callee-saved register
+	movl	%ebp, %esp					# dealloc stack frame
+	popl	%ebp					# restore previous frame pointer
+	ret					# return from function tigermain
+L2:					# string literal: "RANDOM ACCESS\n"
+	.long 14					# string's length
+	.byte 82, 65, 78, 68, 79, 77, 32, 65, 67, 67, 69, 83, 83, 10					# string's bytes
+L1:					# string literal: "UPPER BOUND\n"
+	.long 12					# string's length
+	.byte 85, 80, 80, 69, 82, 32, 66, 79, 85, 78, 68, 10					# string's bytes
+L0:					# string literal: "LOWER BOUND\n"
+	.long 12					# string's length
+	.byte 76, 79, 87, 69, 82, 32, 66, 79, 85, 78, 68, 10					# string's bytes

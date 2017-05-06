@@ -115,7 +115,7 @@ struct
             val ok = ref registers
           in
             if(isNodeColored(n))
-            then (printColor(n, true)) (* Precolored! *)
+            then () (* Precolored! *)
             else(
               (* For each w in adj[n]
                *    if isColored(w)
@@ -137,7 +137,7 @@ struct
               then
                 ErrorMsg.impossible("Not enough colors!")
               else
-                (assignColor(n, hd(!ok)); printColor(n, false))
+                assignColor(n, hd(!ok))
             )
           end
        ))

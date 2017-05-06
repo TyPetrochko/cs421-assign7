@@ -6,12 +6,7 @@ sig
     -> Flow.flowgraph * Flow.Graph.node list * (Assem.instr * Flow.Graph.node) list
  
   val instrs2graph : Assem.instr list
-    -> Flow.flowgraph * Flow.Graph.node list * (Assem.instr * Flow.Graph.node) list
-
-    (* RESTORE THIS
- val instrs2graph : Assem.instr list
     -> Flow.flowgraph * Flow.Graph.node list
-    *)
 end
 
 structure MakeGraph : MAKEGRAPH =
@@ -64,11 +59,11 @@ struct
         let
           val labToMatch = hd labs
         in
-          case mappings of [] => (print("Didn't find forward jump for label "^Symbol.name(labToMatch)^"\n"); ())
+          case mappings of [] => ()
              | (Assem.LABEL{assem, lab}, node)::rest =>
                  (if (lab = labToMatch)
                   then ((if (not(doesEdgeExist(toAdd, node))) then Flow.Graph.mk_edge{from=toAdd, to=node} else ());
-                        print("Found forward jump edge for label "^Symbol.name(labToMatch)^"\n"); ()) 
+                        ()) 
                   else (insertForwardJumpEdge(graph, toAdd, labs, rest)))
              | mapping::rest => insertForwardJumpEdge(graph, toAdd, labs, rest)
         end
@@ -79,7 +74,6 @@ struct
            | (Assem.OPER{assem, dst, src, jump=SOME([lab])}, node)::rest =>
                (if (lab = labToMatch)
                 then ((if(not(doesEdgeExist(node, toAdd))) then Flow.Graph.mk_edge{from=node, to=toAdd} else ()); 
-                     print("Found backward jump edge for label "^Symbol.name(labToMatch)^"\n");
                      insertBackwardJumpEdges(graph, toAdd, labToMatch, rest)) 
                 else (insertBackwardJumpEdges(graph, toAdd, labToMatch, rest)))
            | mapping::rest => insertBackwardJumpEdges(graph, toAdd, labToMatch, rest)
@@ -170,12 +164,8 @@ struct
   fun instrs2graph(instrs) =
   let
     val (flowgraph, nodes, mappings) = instrs2graphRecursive(instrs)
-    val _ = debugFlowGraph(flowgraph, nodes, mappings)
+    (*val _ = debugFlowGraph(flowgraph, nodes, mappings)*)
   in
-    (*
     (flowgraph, nodes)
-    *)
-
-    instrs2graphRecursive(instrs)
   end
 end

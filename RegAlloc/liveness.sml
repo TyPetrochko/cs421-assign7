@@ -198,17 +198,7 @@ struct
       while(!continue)
       do (
         continue := false;
-        (*
-        print("Begin iteration "^Int.toString(!iteration)^"\n");
-        *)
         iteration := !iteration + 1;
-
-        (*
-        print("\tin = "); debugArr(inSet);
-        print("\tin' = "); debugArr(inSet');
-        print("\tout = "); debugArr(outSet);
-        print("\tout' = "); debugArr(outSet');
-        *)
 
         Array.copy{di=0, src=inSet, dst=inSet'};
         Array.copy{di=0, src=outSet, dst=outSet'};
@@ -220,16 +210,8 @@ struct
               (* Will throw an error if can't find it! *)
               val use_n = addManyLS(newLS(), valOf (Graph.Table.look(use, List.nth(nodes, i))))
               val def_n = addManyLS(newLS(), valOf (Graph.Table.look(def, List.nth(nodes, i))))
-
-              (*
-              val _ = print("\tLength of use_n is "^Int.toString(length(lsToTempList(use_n)))^"\n")
-              val _ = print("\tLength of def_n is "^Int.toString(length(lsToTempList(def_n)))^"\n")
-              *)
               val toRet = unionLS(use_n, diffLS(Array.sub(outSet, i), def_n))
             in
-              (*
-              print("\tLength of new in[n] is "^Int.toString(length(lsToTempList(toRet)))^"\n");
-              *)
               toRet
             end
             ) inSet);
@@ -251,23 +233,11 @@ struct
 
             continue := not(setsMatch(inSet, inSet') andalso setsMatch(outSet, outSet')) 
       );
-       
-      (* TODO remove this
-      (Array.modifyi(
-        fn (i, s) =>
-          let
-            val def_n = addManyLS(newLS(), valOf (Graph.Table.look(def, List.nth(nodes, i))))
-          in
-            (* addLS(newLS(), 192) *)
-            unionLS(Array.sub(outSet, i), newLS())
-            (* def_n *)
-          end
-          ) outSet);
-
-          *)
       
+      (*
       print("Printing liveness map:\n");
       debugArr(outSet);
+      *)
 
       (* Return out set *)
       arraySetToLiveSetTable(outSet, nodes)
@@ -373,7 +343,7 @@ struct
     val livMap = buildLivenessMap(flowgraph)
     val (igr, nodeToTempMapping) = buildIgraph(livMap, flowgraph)
   in
-    show(igr);
+    (*show(igr);*)
     (igr, nodeToTempMapping)
   end
   
